@@ -48,9 +48,10 @@
     <!-- Container Peta -->
     <div id="map" class="shadow-sm mb-4"></div>
 
-    <!-- Daftar Destinasi -->
+
+       <!-- Daftar Destinasi -->
     <div class="row">
-        @forelse($destinations as$item)
+        @forelse($destinations as $item)
             <div class="col-md-6 mb-3">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="card-body">
@@ -60,7 +61,7 @@
                                 <span class="badge bg-success">Otentik Batak</span>
                             @endif
                         </div>
-                        <p class="text-muted small mb-2">📍 {{ $item->address }} ({{$item->regency }})</p>
+                        <p class="text-muted small mb-2">📍 {{ $item->address }} ({{ $item->regency }})</p>
                         <p class="card-text">{{ Str::limit($item->description, 100) }}</p>
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div>
