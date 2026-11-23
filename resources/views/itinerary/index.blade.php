@@ -4,14 +4,19 @@
 
 @section('content')
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
         <div>
             <small class="fw-bold text-uppercase" style="color: var(--toba-primary);">GORGA PATHFINDER</small>
             <h1 class="h2 fw-bold mb-0">Daftar Rencana Kunjungan Kuliner</h1>
         </div>
-        <button class="btn btn-toba-primary px-4" data-bs-toggle="modal" data-bs-target="#modalBuatRencana">
-            <i class="bi bi-plus-lg me-1"></i> Buat Rencana Baru
-        </button>
+        <div class="d-flex gap-2">
+            <a href="{{ route('itinerary.create') }}" class="btn btn-toba-secondary px-3">
+                <i class="bi bi-compass me-1"></i> Form Lengkap
+            </a>
+            <button class="btn btn-toba-primary px-4" data-bs-toggle="modal" data-bs-target="#modalBuatRencana">
+                <i class="bi bi-plus-lg me-1"></i> Buat Rencana Cepat
+            </button>
+        </div>
     </div>
 
     <div class="row g-4">

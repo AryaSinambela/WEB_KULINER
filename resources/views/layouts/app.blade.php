@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     
     @vite(['resources/css/toba.css', 'resources/js/app.js'])
     @stack('styles')
@@ -40,8 +42,13 @@
                     <li class="nav-item">
                         <a class="nav-link px-2 {{ request()->routeIs('jelajah*') ? 'active fw-bold text-danger' : '' }}" href="{{ route('jelajah') }}">Jelajah</a>
                     </li>
+                    @if(!auth()->check() || auth()->user()->role === 'wisatawan')
+                        <li class="nav-item">
+                            <a class="nav-link px-2 {{ request()->routeIs('itinerary*') ? 'active fw-bold text-danger' : '' }}" href="{{ route('itinerary.index') }}">Rencana Kunjungan</a>
+                        </li>
+                    @endif
                     <li class="nav-item">
-                        <a class="nav-link px-2 {{ request()->routeIs('itinerary*') ? 'active fw-bold text-danger' : '' }}" href="{{ route('itinerary.index') }}">Rencana Kunjungan</a>
+                        <a class="nav-link px-2 {{ request()->routeIs('tentang*') ? 'active fw-bold text-danger' : '' }}" href="{{ route('tentang') }}">Tentang &amp; Budaya</a>
                     </li>
                 </ul>
 
@@ -60,7 +67,7 @@
                             </a>
                         @endif
 
-                        <a href="{{ route('notifikasi.index') }}" class="btn btn-light rounded-circle position-relative border d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <a href="{{ route('notifikasi.index') }}" class="btn btn-light rounded-circle position-relative border d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;" title="Notifikasi">
                             <i class="bi bi-bell"></i>
                         </a>
 
@@ -74,6 +81,14 @@
                                     <li><a class="dropdown-item rounded-3 py-2" href="{{ route('profil.edit') }}"><i class="bi bi-person me-2"></i>Profil &amp; Preferensi</a></li>
                                     <li><a class="dropdown-item rounded-3 py-2" href="{{ route('itinerary.index') }}"><i class="bi bi-map me-2"></i>Rencana Kunjungan Saya</a></li>
                                     <li><a class="dropdown-item rounded-3 py-2" href="{{ route('profil.ulasan') }}"><i class="bi bi-star me-2"></i>Riwayat Ulasan Saya</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                @elseif(auth()->user()->role === 'umkm')
+                                    <li><a class="dropdown-item rounded-3 py-2" href="{{ route('umkm.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard Mitra</a></li>
+                                    <li><a class="dropdown-item rounded-3 py-2" href="{{ route('umkm.akun') }}"><i class="bi bi-person-gear me-2"></i>Pengaturan Akun Mitra</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                @elseif(auth()->user()->role === 'admin')
+                                    <li><a class="dropdown-item rounded-3 py-2" href="{{ route('admin.dashboard') }}"><i class="bi bi-shield-check me-2"></i>Dashboard Admin</a></li>
+                                    <li><a class="dropdown-item rounded-3 py-2" href="{{ route('admin.profil') }}"><i class="bi bi-person-badge me-2"></i>Profil &amp; Log Kurator</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                 @endif
                                 <li>
@@ -91,7 +106,7 @@
     </nav>
 
     <!-- Notifikasi Flash Message -->
-    @if(session('success') || session('error'))
+    @if(session('success') || session('error') || session('info'))
         <div class="container-toba mt-3">
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm" role="alert">
@@ -102,6 +117,12 @@
             @if(session('error'))
                 <div class="alert alert-danger alert-dismissible fade show rounded-3 border-0 shadow-sm" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+            @if(session('info'))
+                <div class="alert alert-info alert-dismissible fade show rounded-3 border-0 shadow-sm" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i> {{ session('info') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
@@ -120,30 +141,24 @@
                 <div class="col-lg-5">
                     <h4 class="font-headline text-white fw-bold mb-2">Toba Kuliner</h4>
                     <p class="small text-white-50 mb-0">
-                        Pusat kurasi warisan kuliner otentik kawasan Danau Toba. Merajut kearifan cita rasa lokal Batak, menjamin transparansi informasi, serta menghubungkan penikmat kuliner dengan tradisi leluhur.
+                        Pusat kurasi warisan kuliner otentik kawasan Danau Toba. Merajut kearifan cita rasa lokal Batak, menjamin transparansi informasi toko &amp; rumah makan, serta menghubungkan penikmat kuliner dengan tradisi leluhur.
                     </p>
                 </div>
                 <div class="col-lg-4">
                     <h6 class="text-white fw-semibold mb-2">Eksplorasi Kawasan</h6>
                     <div class="d-flex flex-wrap gap-2 small text-white-50">
-                        <span>Balige &amp; Toba</span> •
-                        <span>Pesisir Samosir</span> •
-                        <span>Parapat &amp; Simalungun</span> •
-                        <span>Tarutung &amp; Taput</span> •
-                        <span>Dolok Sanggul</span>
+                        <a href="{{ route('jelajah', ['kabupaten' => 'Toba']) }}" class="text-white-50 text-decoration-none">Balige &amp; Toba</a> •
+                        <a href="{{ route('jelajah', ['kabupaten' => 'Samosir']) }}" class="text-white-50 text-decoration-none">Pesisir Samosir</a> •
+                        <a href="{{ route('jelajah', ['kabupaten' => 'Simalungun']) }}" class="text-white-50 text-decoration-none">Parapat &amp; Simalungun</a> •
+                        <a href="{{ route('jelajah', ['kabupaten' => 'Tapanuli Utara']) }}" class="text-white-50 text-decoration-none">Tarutung &amp; Taput</a> •
+                        <a href="{{ route('jelajah', ['kabupaten' => 'Humbang Hasundutan']) }}" class="text-white-50 text-decoration-none">Dolok Sanggul</a>
                     </div>
                 </div>
                 <div class="col-lg-3">
                     <div class="p-3 rounded-4" style="background: rgba(255,255,255,0.1);">
-                        <div class="form-check form-switch d-flex align-items-center justify-content-between ps-0">
-                            <div>
-                                <label class="form-check-label fw-semibold small text-white d-block" for="globalLowBandwidth">
-                                    <i class="bi bi-reception-2 me-1 text-warning"></i> Mode Hemat Data
-                                </label>
-                                <span class="text-white-50" style="font-size: 11px;">Optimasi peta &amp; gambar jaringan lambat</span>
-                            </div>
-                            <input class="form-check-input ms-2" type="checkbox" role="switch" id="globalLowBandwidth">
-                        </div>
+                        <h6 class="text-white fw-semibold small mb-1"><i class="bi bi-award-fill text-warning me-1"></i> Akreditasi Otentik Batak</h6>
+                        <span class="text-white-50 d-block mb-2" style="font-size: 11px;">Daftarkan rumah makan atau lapau tradisional Anda ke peta resmi Kaldera Toba.</span>
+                        <a href="{{ route('umkm.landing') }}" class="btn btn-sm btn-warning fw-bold w-100 py-1" style="font-size: 12px;">Gabung Mitra Kuliner</a>
                     </div>
                 </div>
             </div>
@@ -159,30 +174,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script>
-        const bwToggle = document.getElementById('globalLowBandwidth');
-        if (bwToggle) {
-            bwToggle.checked = localStorage.getItem('toba_low_bandwidth') === 'true';
-            bwToggle.addEventListener('change', function () {
-                localStorage.setItem('toba_low_bandwidth', this.checked);
-                window.dispatchEvent(new CustomEvent('lowBandwidthChanged', { detail: this.checked }));
-            });
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        // 1. Sinkronisasi Mode Hemat Data
-        const bwToggle = document.getElementById('globalLowBandwidth');
-        if (bwToggle) {
-            bwToggle.checked = localStorage.getItem('toba_low_bandwidth') === 'true';
-            bwToggle.addEventListener('change', function () {
-                localStorage.setItem('toba_low_bandwidth', this.checked);
-                window.dispatchEvent(new CustomEvent('lowBandwidthChanged', { detail: this.checked }));
-            });
-        }
-
-        // 2. Efek Pop-Up Otomatis untuk Semua Kartu di Semua Halaman
+        // Efek Pop-Up Otomatis untuk Semua Kartu di Semua Halaman
         document.addEventListener('DOMContentLoaded', () => {
             const cards = document.querySelectorAll('.card-toba');
             const observer = new IntersectionObserver((entries) => {

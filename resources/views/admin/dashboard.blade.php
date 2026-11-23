@@ -13,8 +13,11 @@
             <a href="{{ route('admin.verifikasi.index') }}" class="btn btn-toba-primary btn-sm px-3">
                 Antrean Verifikasi ({{ $rekap['destinasi_menunggu'] + $rekap['label_menunggu'] }})
             </a>
+            <a href="{{ route('admin.peta') }}" class="btn btn-toba-secondary btn-sm px-3"><i class="bi bi-map-fill text-danger me-1"></i> Peta Sebaran</a>
             <a href="{{ route('admin.ulasan.index') }}" class="btn btn-toba-secondary btn-sm px-3">Moderasi Ulasan</a>
             <a href="{{ route('admin.master') }}" class="btn btn-toba-secondary btn-sm px-3">Master Data</a>
+            <a href="{{ route('admin.pengguna.index') }}" class="btn btn-toba-secondary btn-sm px-3">Pengguna</a>
+            <a href="{{ route('admin.profil') }}" class="btn btn-toba-secondary btn-sm px-3">Log Kurator</a>
         </div>
     </div>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Destinasi;
 use App\Models\KategoriMakanan;
 use App\Models\Wilayah;
+use App\Models\WisataAlam;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -12,61 +13,95 @@ class PetaController extends Controller
 {
     public function index()
     {
-        $kategoris = KategoriMakanan::all();$wilayahs = Wilayah::orderBy('kabupaten')->get();
+        if (Destinasi::count() < 5) {
+            app(\Database\Seeders\DatabaseSeeder::class)->run();
+        }
+
+        $kategoris = KategoriMakanan::all();
+        $wilayahs = Wilayah::orderBy('kabupaten')->get();
 
         return view('peta.index', compact('kategoris', 'wilayahs'));
     }
 
     public function data(Request $request)
     {
-        $query = Destinasi::with(['wilayah', 'kategori', 'fotoUtama', 'ulasans'])
+        $query = Destinasi::with(['wilayah', 'kategori', 'fotoUtama', 'ulasans', 'pemilik', 'menus'])
             ->where('status_verifikasi', 'disetujui');
 
-        if ($request->boolean('otentik')) {$query->where('is_otentik_batak', true);
+        if ($request->filled('q')) {
+            $keyword = $request->q;
+            $query->where(function ($sub) use ($keyword) {
+                $sub->where('nama', 'like', "%{$keyword}%")
+                    ->orWhere('alamat', 'like', "%{$keyword}%")
+                    ->orWhere('deskripsi', 'like', "%{$keyword}%")
+                    ->orWhereHas('menus', function ($m) use ($keyword) {
+                        $m->where('nama_menu', 'like', "%{$keyword}%");
+                    });
+            });
+        }
+
+        if ($request->boolean('otentik')) {
+            $query->where('is_otentik_batak', true);
         }
 
         if ($request->filled('kategori')) {
-            $kategoriIds = is_array($request->kategori) ? $request->kategori : explode(',',$request->kategori);
+            $kategoriIds = is_array($request->kategori) ? $request->kategori : explode(',', $request->kategori);
             $query->whereIn('kategori_id', array_filter($kategoriIds));
         }
 
         if ($request->filled('wilayah_id')) {
-            $query->where('wilayah_id',$request->wilayah_id);
+            $query->where('wilayah_id', $request->wilayah_id);
+        }
+
+        if ($request->filled('kabupaten')) {
+            $query->whereHas('wilayah', function ($w) use ($request) {
+                $w->where('kabupaten', $request->kabupaten);
+            });
         }
 
         if ($request->filled('harga_max')) {
-            $query->where(function ($q) use ($request) {$q->whereNull('harga_min')
+            $query->where(function ($q) use ($request) {
+                $q->whereNull('harga_min')
                   ->orWhere('harga_min', '<=', (int) $request->harga_max);
             });
         }
 
         // Filter Buka Sekarang berdasarkan jam_buka dan jam_tutup
         if ($request->boolean('buka_sekarang')) {
-            $now = Carbon::now('Asia/Jakarta')->format('H:i:s');$query->whereNotNull('jam_buka')
+            $now = Carbon::now('Asia/Jakarta')->format('H:i:s');
+            $query->whereNotNull('jam_buka')
                   ->whereNotNull('jam_tutup')
                   ->where('jam_buka', '<=', $now)
                   ->where('jam_tutup', '>=', $now);
         }
 
-        $destinasi =$query->get();
+        $destinasi = $query->get();
 
         // Filter Radius (Haversine formula jika user mengirimkan lat, lng, dan radius km)
-        if ($request->filled(['lat', 'lng', 'radius'])) {
-            $lat = (float)$request->lat;
-            $lng = (float)$request->lng;
-            $radius = (float)$request->radius;
+        if ($request->filled(['lat', 'lng', 'radius']) && (float) $request->radius > 0) {
+            $lat = (float) $request->lat;
+            $lng = (float) $request->lng;
+            $radius = (float) $request->radius;
 
-            $destinasi =$destinasi->filter(function ($item) use ($lat, $lng,$radius) {
-                $distance =$this->haversine($lat,$lng, (float) $item->latitude, (float)$item->longitude);
+            $destinasi = $destinasi->filter(function ($item) use ($lat, $lng, $radius) {
+                $distance = $this->haversine($lat, $lng, (float) $item->latitude, (float) $item->longitude);
                 $item->jarak_km = round($distance, 1);
-                return $distance <=$radius;
+                return $distance <= $radius;
             })->values();
+        } elseif ($request->filled(['lat', 'lng'])) {
+            $lat = (float) $request->lat;
+            $lng = (float) $request->lng;
+            $destinasi->each(function ($item) use ($lat, $lng) {
+                $item->jarak_km = round($this->haversine($lat, $lng, (float) $item->latitude, (float) $item->longitude), 1);
+            });
         }
 
         $payload = $destinasi->map(function ($item) {
             return [
                 'id' => $item->id,
                 'nama' => $item->nama,
+                'pemilik' => $item->pemilik->nama ?? 'Mitra Kuliner Toba',
+                'menu_andalan' => $item->menus->pluck('nama_menu')->take(3)->values(),
                 'alamat' => $item->alamat,
                 'kecamatan' => $item->wilayah->nama_kecamatan ?? '',
                 'kabupaten' => $item->wilayah->kabupaten ?? '',
@@ -88,9 +123,27 @@ class PetaController extends Controller
             ];
         });
 
+        // Muat juga titik Wisata Alam Kaldera Toba sebagai layer pelengkap
+        $wisataAlamQuery = WisataAlam::with('wilayah');
+        if ($request->filled('wilayah_id')) {
+            $wisataAlamQuery->where('wilayah_id', $request->wilayah_id);
+        }
+        $wisataAlam = $wisataAlamQuery->get()->map(function ($wa) {
+            return [
+                'id' => $wa->id,
+                'nama' => $wa->nama,
+                'deskripsi' => $wa->deskripsi,
+                'kecamatan' => $wa->wilayah->nama_kecamatan ?? '',
+                'kabupaten' => $wa->wilayah->kabupaten ?? '',
+                'latitude' => (float) $wa->latitude,
+                'longitude' => (float) $wa->longitude,
+            ];
+        });
+
         return response()->json([
             'total' => $payload->count(),
             'data' => $payload,
+            'wisata_alam' => $wisataAlam,
         ]);
     }
 

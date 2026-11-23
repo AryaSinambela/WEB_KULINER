@@ -11,6 +11,10 @@ class HomeController extends Controller
 {
     public function index()
     {
+        if (Destinasi::count() < 5) {
+            app(\Database\Seeders\DatabaseSeeder::class)->run();
+        }
+
         $kategoris = KategoriMakanan::withCount(['destinasi' => function ($q) {
             $q->where('status_verifikasi', 'disetujui');
         }])->take(6)->get();

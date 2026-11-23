@@ -10,4 +10,5 @@ class Ulasan extends Model
 
     public function user() { return $this->belongsTo(User::class); }
     public function destinasi() { return $this->belongsTo(Destinasi::class); }
+    public function fotos() { return $this->hasMany(FotoUlasan::class, 'ulasan_id'); }
 }

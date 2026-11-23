@@ -107,20 +107,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Banner Mode Hemat Data -->
-        <div class="card-toba p-3 px-4 mt-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" style="background: rgba(244, 239, 226, 0.9);">
-            <div class="d-flex align-items-center gap-3">
-                <div class="p-2 px-3 rounded-3 bg-white text-warning fs-4 shadow-sm">
-                    <i class="bi bi-reception-3"></i>
-                </div>
-                <div>
-                    <h6 class="fw-bold mb-0">Jelajah Hemat Data Aktif <span class="badge bg-success ms-1" style="font-size: 10px;">MODE SINYAL LEMAH</span></h6>
-                    <small class="text-muted">Peta vektor ringan tanpa citra satelit siap digunakan saat melintasi perbukitan &amp; penyeberangan Danau Toba.</small>
-                </div>
-            </div>
-            <a href="{{ route('peta') }}" class="btn btn-toba-secondary btn-sm px-4 py-2 text-nowrap">Atur Mode Peta</a>
-        </div>
     </div>
 </section>
 
@@ -194,10 +180,13 @@
                         </div>
                         <div class="p-4 d-flex flex-column flex-grow-1 justify-content-between">
                             <div>
-                                <small class="text-muted d-block mb-1">
-                                    <i class="bi bi-geo-alt-fill text-danger"></i> {{ $item->wilayah->nama_kecamatan ?? '' }}, {{ $item->wilayah->kabupaten ?? '' }}
+                                <small class="text-uppercase fw-bold d-block mb-1" style="color: var(--toba-primary); font-size: 10px;">
+                                    <i class="bi bi-shop me-1"></i> TOKO / RUMAH MAKAN TERVERIFIKASI
                                 </small>
-                                <h5 class="fw-bold mb-2">{{ $item->nama }}</h5>
+                                <h5 class="fw-bold mb-1">{{ $item->nama }}</h5>
+                                <small class="text-muted d-block mb-2">
+                                    <i class="bi bi-geo-alt-fill text-danger"></i> {{ $item->alamat }} ({{ $item->wilayah->nama_kecamatan ?? '' }}, {{ $item->wilayah->kabupaten ?? '' }})
+                                </small>
                                 <p class="text-muted small" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $item->deskripsi }}</p>
                             </div>
                             <div class="pt-3 border-top" style="border-color: var(--toba-border) !important;">
@@ -205,7 +194,7 @@
                                     <span class="fw-bold" style="color: var(--toba-primary);">Rp {{ number_format($item->harga_min ?? 15000, 0, ',', '.') }} / porsi</span>
                                     <span><span class="text-warning fw-bold">★ {{ $item->rating_lokal ?: '4.8' }}</span> <span class="text-muted">(Lokal)</span></span>
                                 </div>
-                                <a href="{{ route('destinasi.show', $item) }}" class="btn btn-toba-primary btn-sm w-100 py-2">Lihat Detail &amp; Cerita</a>
+                                <a href="{{ route('destinasi.show', $item) }}" class="btn btn-toba-primary btn-sm w-100 py-2">Lihat Toko, Menu &amp; Cerita</a>
                             </div>
                         </div>
                     </div>
@@ -222,23 +211,44 @@
             <div class="row align-items-center g-4">
                 <div class="col-lg-5">
                     <small class="fw-bold text-uppercase" style="color: var(--toba-primary);">GEOSPASIAL &amp; RUTE RASA</small>
-                    <h2 class="fw-bold mt-1 mb-3">Peta Eksplorasi Wilayah Lingkar Danau</h2>
+                    <h2 class="fw-bold mt-1 mb-3">Peta Eksplorasi Toko Kuliner Lingkar Danau</h2>
                     <p class="text-muted small mb-4">
-                        Temukan titik kedai legendaris di sekeliling Kaldera Toba lengkap dengan filter radius, jam buka, dan mode hemat data untuk area minim sinyal.
+                        Temukan titik toko, rumah makan, dan lapau legendaris di sekeliling Kaldera Toba lengkap dengan navigasi rute jalan raya OSRM, layer satelit &amp; topografi, serta filter radius. Klik pada peta di samping atau pilih wilayah di bawah untuk langsung membuka <strong>Peta Kuliner Interaktif</strong>.
                     </p>
                     <div class="d-flex flex-wrap gap-2 mb-4">
                         @foreach($wilayahs as $kab)
-                            <a href="{{ route('jelajah', ['kabupaten' => $kab]) }}" class="badge bg-white text-dark border text-decoration-none py-2 px-3 rounded-pill shadow-sm">
-                                <i class="bi bi-geo-alt text-danger me-1"></i> {{ $kab }}
+                            <a href="{{ route('peta', ['q' => $kab]) }}" class="badge bg-white text-dark border text-decoration-none py-2 px-3 rounded-pill shadow-sm">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ $kab }}
                             </a>
                         @endforeach
                     </div>
                     <a href="{{ route('peta') }}" class="btn btn-toba-primary px-4 py-2">
-                        Buka Peta Interaktif Lengkap <i class="bi bi-map ms-1"></i>
+                        Buka Peta Kuliner Interaktif <i class="bi bi-map-fill ms-1"></i>
                     </a>
                 </div>
                 <div class="col-lg-7">
-                    <div id="homePreviewMap" class="rounded-4 border shadow-sm" style="height: 330px;"></div>
+                    <div class="position-relative rounded-4 overflow-hidden border shadow" style="cursor: pointer;" id="homePreviewMapWrapper" title="Klik untuk membuka Peta Kuliner Interaktif">
+                        <!-- Badge Overlay Atas Peta -->
+                        <div class="position-absolute top-0 start-0 m-3 px-3 py-2 bg-white rounded-pill shadow-sm border d-flex align-items-center gap-2 small fw-semibold" style="z-index: 500; pointer-events: none;">
+                            <span class="d-inline-block rounded-circle bg-danger" style="width: 9px; height: 9px;"></span>
+                            <span>Peta Live Kaldera Toba (<span id="homeMapPinCount">10</span> Toko Aktif)</span>
+                        </div>
+
+                        <!-- Tombol Overlay Bawah Peta (Klik langsung ke Peta Kuliner) -->
+                        <a href="{{ route('peta') }}" class="position-absolute bottom-0 end-0 m-3 btn btn-toba-primary btn-sm rounded-pill px-3 py-2 shadow d-flex align-items-center gap-2" style="z-index: 500;">
+                            <i class="bi bi-fullscreen"></i>
+                            <span>Klik Peta untuk Eksplorasi Penuh</span>
+                        </a>
+
+                        <!-- Legenda Singkat Kiri Bawah -->
+                        <div class="position-absolute bottom-0 start-0 m-3 px-3 py-1 bg-white bg-opacity-90 rounded-pill shadow-sm border d-none d-sm-flex align-items-center gap-3 small" style="z-index: 500; pointer-events: none; font-size: 11px;">
+                            <span><i class="bi bi-circle-fill" style="color: #C9A24B;"></i> Toko Otentik</span>
+                            <span><i class="bi bi-circle-fill" style="color: #8B1E2D;"></i> Toko Kuliner</span>
+                            <span><i class="bi bi-circle-fill" style="color: #198754;"></i> Wisata Alam</span>
+                        </div>
+
+                        <div id="homePreviewMap" style="height: 380px; width: 100%;"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -259,8 +269,8 @@
                     <div class="p-3 rounded-4 d-inline-block mb-3" style="background-color: var(--toba-secondary-light); color: var(--toba-primary);">
                         <i class="bi bi-award-fill fs-4"></i>
                     </div>
-                    <h5 class="fw-bold mb-2">4 Pilar Kurasi Adat</h5>
-                    <p class="text-muted small mb-0">Verifikasi ketat terhadap penggunaan rempah endemik lokal (andaliman liar, asam cikala), transmisi resep turun-temurun, dan kebersihan penyajian.</p>
+                    <h5 class="fw-bold mb-2">Narasi Budaya di Setiap Menu</h5>
+                    <p class="text-muted small mb-0">Setiap hidangan dilengkapi kisah asal-usul, makna filosofis dalam adat Batak, serta glosarium istilah kuliner tradisional dari toko aslinya.</p>
                 </div>
             </div>
             <div class="col-md-4">
@@ -277,8 +287,8 @@
                     <div class="p-3 rounded-4 d-inline-block mb-3" style="background-color: var(--toba-secondary-light); color: var(--toba-primary);">
                         <i class="bi bi-compass-fill fs-4"></i>
                     </div>
-                    <h5 class="fw-bold mb-2">Navigasi Peta Cerdas &amp; Hemat Data</h5>
-                    <p class="text-muted small mb-0">Rancang itinerary kuliner yang terintegrasi langsung dengan titik wisata alam terdekat serta didukung mode peta vektor ringan.</p>
+                    <h5 class="fw-bold mb-2">Navigasi Peta Multi-Layer &amp; Rute OSRM</h5>
+                    <p class="text-muted small mb-0">Rancang itinerary toko kuliner yang terintegrasi langsung dengan rute jalan raya nyata dan titik wisata alam terdekat di Kaldera Toba.</p>
                 </div>
             </div>
         </div>
@@ -353,23 +363,83 @@
 document.addEventListener('DOMContentLoaded', function () {
     const previewMapEl = document.getElementById('homePreviewMap');
     if (previewMapEl) {
-        const pMap = L.map('homePreviewMap', { scrollWheelZoom: false }).setView([2.6500, 98.8500], 9);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        const petaUrl = "{{ route('peta') }}";
+        const pMap = L.map('homePreviewMap', {
+            scrollWheelZoom: false,
+            zoomControl: true
+        }).setView([2.4800, 98.9000], 9);
+
+        // Gunakan tile peta berwarna OpenStreetMap agar Danau Toba & jalan terlihat jelas
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
             attribution: '&copy; OpenStreetMap'
         }).addTo(pMap);
+
+        // Klik di area peta langsung mengarahkan ke halaman Peta Kuliner Interaktif
+        pMap.on('click', function () {
+            window.location.href = petaUrl;
+        });
+
+        function createHomePin(bgColor, iconClass) {
+            return L.divIcon({
+                className: '',
+                html: `<div style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${bgColor};border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,0.35);">
+                         <i class="bi ${iconClass}" style="transform:rotate(45deg);color:#fff;font-size:13px;"></i>
+                       </div>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
+                tooltipAnchor: [0, -28]
+            });
+        }
 
         fetch("{{ route('peta.data') }}")
             .then(r => r.json())
             .then(res => {
+                const countEl = document.getElementById('homeMapPinCount');
+                if (countEl && res.total !== undefined) countEl.textContent = res.total;
+
+                const bounds = [];
+
                 res.data.forEach(item => {
-                    L.circleMarker([item.latitude, item.longitude], {
-                        radius: 8,
-                        fillColor: item.is_otentik_batak ? '#C9A24B' : '#8B1E2D',
-                        color: '#fff',
-                        weight: 2,
-                        fillOpacity: 0.95
-                    }).addTo(pMap).bindPopup(`<strong>${item.nama}</strong><br><small>${item.kabupaten}</small>`);
+                    bounds.push([item.latitude, item.longitude]);
+                    const pinColor = item.is_otentik_batak ? '#C9A24B' : '#8B1E2D';
+                    const pinIcon = item.is_otentik_batak ? 'bi-award-fill' : 'bi-shop';
+
+                    const marker = L.marker([item.latitude, item.longitude], {
+                        icon: createHomePin(pinColor, pinIcon)
+                    }).addTo(pMap);
+
+                    marker.bindTooltip(`<strong>${item.nama}</strong><br><small>${item.kecamatan}, ${item.kabupaten} (Klik ke Peta Kuliner)</small>`, {
+                        direction: 'top'
+                    });
+
+                    // Saat pin diklik, langsung bawa ke halaman Peta Kuliner dengan filter nama toko tersebut
+                    marker.on('click', function (e) {
+                        L.DomEvent.stopPropagation(e);
+                        window.location.href = `${petaUrl}?q=${encodeURIComponent(item.nama)}`;
+                    });
                 });
+
+                if (res.wisata_alam) {
+                    res.wisata_alam.forEach(wa => {
+                        const waMarker = L.marker([wa.latitude, wa.longitude], {
+                            icon: createHomePin('#198754', 'bi-tree-fill')
+                        }).addTo(pMap);
+
+                        waMarker.bindTooltip(`<strong>${wa.nama}</strong><br><small>Wisata Alam • Klik ke Peta Kuliner</small>`, {
+                            direction: 'top'
+                        });
+
+                        waMarker.on('click', function (e) {
+                            L.DomEvent.stopPropagation(e);
+                            window.location.href = petaUrl;
+                        });
+                    });
+                }
+
+                if (bounds.length > 0) {
+                    pMap.fitBounds(bounds, { padding: [25, 25] });
+                }
             });
     }
 });

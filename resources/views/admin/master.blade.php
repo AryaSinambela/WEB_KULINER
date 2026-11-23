@@ -26,13 +26,35 @@
                 <ul class="list-group list-group-flush small">
                     @foreach($kategoris as $kat)
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span><strong>{{ $kat->nama }}</strong> <span class="text-muted">({{ $kat->destinasi_count }} destinasi)</span></span>
-                            @if($kat->destinasi_count === 0)
-                                <form action="{{ route('admin.kategori.destroy', $kat) }}" method="POST">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0">Hapus</button>
-                                </form>
-                            @endif
+                            <span><strong>{{ $kat->nama }}</strong> <span class="text-muted">({{ $kat->destinasi_count }} toko)</span></span>
+                            <div class="d-flex gap-2 align-items-center">
+                                <button type="button" class="btn btn-sm btn-link text-decoration-none p-0" style="color: var(--toba-primary);" data-bs-toggle="modal" data-bs-target="#modalEditKat{{ $kat->id }}">Edit</button>
+                                @if($kat->destinasi_count === 0)
+                                    <form action="{{ route('admin.kategori.destroy', $kat) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-link text-danger text-decoration-none p-0">Hapus</button>
+                                    </form>
+                                @endif
+                            </div>
+
+                            <!-- Modal Edit Kategori -->
+                            <div class="modal fade" id="modalEditKat{{ $kat->id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-sm">
+                                    <form action="{{ route('admin.kategori.update', $kat) }}" method="POST" class="modal-content rounded-4 border-0">
+                                        @csrf @method('PUT')
+                                        <div class="modal-header">
+                                            <h6 class="modal-title fw-bold">Edit Kategori</h6>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="text" name="nama" value="{{ $kat->nama }}" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-toba-primary btn-sm w-100">Simpan</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </li>
                     @endforeach
                 </ul>
@@ -59,13 +81,42 @@
                 <ul class="list-group list-group-flush small">
                     @foreach($wilayahs as $w)
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span><strong>{{ $w->nama_kecamatan }}</strong> — Kab. {{ $w->kabupaten }}</span>
-                            @if($w->destinasi_count === 0)
-                                <form action="{{ route('admin.wilayah.destroy', $w) }}" method="POST">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0">Hapus</button>
-                                </form>
-                            @endif
+                            <span><strong>{{ $w->nama_kecamatan }}</strong> — Kab. {{ $w->kabupaten }} <span class="text-muted">({{ $w->destinasi_count }} toko)</span></span>
+                            <div class="d-flex gap-2 align-items-center">
+                                <button type="button" class="btn btn-sm btn-link text-decoration-none p-0" style="color: var(--toba-primary);" data-bs-toggle="modal" data-bs-target="#modalEditWil{{ $w->id }}">Edit</button>
+                                @if($w->destinasi_count === 0)
+                                    <form action="{{ route('admin.wilayah.destroy', $w) }}" method="POST" onsubmit="return confirm('Hapus wilayah ini?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-link text-danger text-decoration-none p-0">Hapus</button>
+                                    </form>
+                                @endif
+                            </div>
+
+                            <!-- Modal Edit Wilayah -->
+                            <div class="modal fade" id="modalEditWil{{ $w->id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-sm">
+                                    <form action="{{ route('admin.wilayah.update', $w) }}" method="POST" class="modal-content rounded-4 border-0">
+                                        @csrf @method('PUT')
+                                        <div class="modal-header">
+                                            <h6 class="modal-title fw-bold">Edit Wilayah</h6>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-2">
+                                                <label class="form-label small fw-bold">Kecamatan</label>
+                                                <input type="text" name="nama_kecamatan" value="{{ $w->nama_kecamatan }}" class="form-control form-control-sm" required>
+                                            </div>
+                                            <div>
+                                                <label class="form-label small fw-bold">Kabupaten</label>
+                                                <input type="text" name="kabupaten" value="{{ $w->kabupaten }}" class="form-control form-control-sm" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-toba-primary btn-sm w-100">Simpan</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </li>
                     @endforeach
                 </ul>

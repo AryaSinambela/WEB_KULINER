@@ -15,7 +15,11 @@ class LabelController extends Controller
     {
         $destinasi = Destinasi::with(['pengajuanOtentik' => fn($q) => $q->latest('diajukan_pada'), 'ceritaBudaya'])
             ->where('pemilik_id', Auth::id())
-            ->firstOrFail();
+            ->first();
+
+        if (!$destinasi) {
+            return redirect()->route('umkm.usaha.edit')->with('error', 'Silakan lengkapi profil toko terlebih dahulu sebelum mengajukan Label Otentik.');
+        }
 
         return view('umkm.label', compact('destinasi'));
     }

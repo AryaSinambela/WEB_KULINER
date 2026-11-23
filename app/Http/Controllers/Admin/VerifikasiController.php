@@ -80,6 +80,11 @@ class VerifikasiController extends Controller
         return back()->with('success', "Pengajuan destinasi {$destinasi->nama} ditolak beserta catatan perbaikan.");
     }
 
+    public function revisi(Request $request, Destinasi $destinasi)
+    {
+        return $this->tolak($request, $destinasi);
+    }
+
     // 3. Verifikasi Label Otentik Batak (Terpisah dari Verifikasi Destinasi)
     public function label(Request $request, Destinasi $destinasi)
     {

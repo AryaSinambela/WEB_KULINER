@@ -20,6 +20,7 @@ class DestinasiController extends Controller
         $stat->increment('profil_dilihat');
 
         $destinasi->load([
+            'pemilik',
             'wilayah',
             'kategori',
             'fotos',

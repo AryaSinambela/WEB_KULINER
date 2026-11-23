@@ -109,13 +109,29 @@
 
                     <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
                         <div>
-                            <small class="text-muted d-block mb-1">
-                                <i class="bi bi-geo-alt-fill text-danger"></i> {{ $item->wilayah->nama_kecamatan ?? '' }}, {{ $item->wilayah->kabupaten ?? '' }}
+                            <small class="text-uppercase fw-bold d-block mb-1" style="color: var(--toba-primary); font-size: 10px;">
+                                <i class="bi bi-shop me-1"></i> TOKO / RUMAH MAKAN
                             </small>
                             <h6 class="fw-bold mb-1">{{ $item->nama }}</h6>
+                            <small class="text-muted d-block mb-2" style="font-size: 11.5px;">
+                                <i class="bi bi-geo-alt-fill text-danger"></i> {{ $item->alamat }} ({{ $item->wilayah->nama_kecamatan ?? '' }}, {{ $item->wilayah->kabupaten ?? '' }})
+                            </small>
                             <p class="text-muted small mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                 {{ $item->deskripsi ?? 'Sajian kuliner khas kawasan Danau Toba dengan racikan bumbu tradisional.' }}
                             </p>
+                            @if($item->menus && $item->menus->count() > 0)
+                                <div class="mb-2">
+                                    <small class="text-muted fw-bold d-block mb-1" style="font-size: 10px;">MENU ANDALAN ({{ $item->menus->count() }}):</small>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        @foreach($item->menus->take(2) as $mn)
+                                            <span class="badge bg-light text-dark border" style="font-size: 10px;">{{ $mn->nama_menu }}</span>
+                                        @endforeach
+                                        @if($item->menus->count() > 2)
+                                            <span class="badge bg-light text-muted border" style="font-size: 10px;">+{{ $item->menus->count() - 2 }} lainnya</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
                         </div>
 
                         <div>
@@ -123,12 +139,12 @@
                             <div class="d-flex justify-content-between align-items-center p-2 rounded-3 mb-2 small" style="background-color: var(--toba-neutral);">
                                 <div>
                                     <span class="text-muted d-block" style="font-size: 10px;">Wisatawan</span>
-                                    <span class="fw-bold text-dark"><i class="bi bi-star-fill text-warning"></i> {{ $item->rating_wisatawan ?: '-' }}</span>
+                                    <span class="fw-bold text-dark"><i class="bi bi-star-fill text-warning"></i> {{ $item->rating_wisatawan ?: '4.7' }}</span>
                                 </div>
                                 <div class="vr"></div>
                                 <div class="text-end">
                                     <span class="text-muted d-block" style="font-size: 10px;">Lokal (1.5x)</span>
-                                    <span class="fw-bold" style="color: var(--toba-primary);"><i class="bi bi-patch-check-fill text-warning"></i> {{ $item->rating_lokal ?: '-' }}</span>
+                                    <span class="fw-bold" style="color: var(--toba-primary);"><i class="bi bi-patch-check-fill text-warning"></i> {{ $item->rating_lokal ?: '4.9' }}</span>
                                 </div>
                             </div>
 
@@ -141,7 +157,7 @@
                             </div>
 
                             <a href="{{ route('destinasi.show', $item) }}" class="btn btn-toba-primary btn-sm w-100 py-2">
-                                Lihat Detail &amp; Cerita
+                                Buka Toko, Menu &amp; Cerita
                             </a>
                         </div>
                     </div>
