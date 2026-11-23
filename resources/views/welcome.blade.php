@@ -88,7 +88,7 @@
                     <span class="badge-otentik position-absolute top-0 start-0 m-4 shadow-sm">
                         <i class="bi bi-award-fill text-warning me-1"></i> PUSAKA KULINER ADAT
                     </span>
-                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=85" 
+                    <img src="{{ \App\Models\FotoDestinasi::resolveImageUrl('images/hero/hero-arsik-toba.jpg') }}" 
                          alt="Arsik Ikan Mas Pusaka" class="img-fluid rounded-4 w-100 object-fit-cover" style="height: 410px;">
                     <div class="d-flex justify-content-between align-items-center mt-3 px-2">
                         <div>
@@ -110,7 +110,7 @@
     </div>
 </section>
 
-<!-- 2. 6 PILAR KATEGORI WARISAN KULINER (DENGAN FOTO) -->
+<!-- 2. 6 PILAR KATEGORI WARISAN KULINER (DENGAN FOTO LOKAL) -->
 <section class="py-5">
     <div class="container-toba">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
@@ -123,12 +123,12 @@
 
         @php
             $katImages = [
-                'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80',
+                'images/kategori/kategori-1-pusaka-ikan-kuah.jpg',
+                'images/kategori/kategori-2-mie-olahan-tepung.jpg',
+                'images/kategori/kategori-3-kudapan-kue-adat.jpg',
+                'images/kategori/kategori-4-kopi-teh-dataran-tinggi.jpg',
+                'images/kategori/kategori-5-olahan-daging-tradisi.jpg',
+                'images/kategori/kategori-6-bumbu-sambal-khas.jpg',
             ];
         @endphp
 
@@ -137,7 +137,7 @@
                 <div class="col-md-6 col-lg-4">
                     <a href="{{ route('jelajah', ['kategori_id' => $kat->id]) }}" class="text-decoration-none">
                         <div class="card-toba h-100 overflow-hidden d-flex flex-column">
-                            <img src="{{ $katImages[$idx % count($katImages)] }}" class="w-100 object-fit-cover" style="height: 175px;" alt="{{ $kat->nama }}">
+                            <img src="{{ \App\Models\FotoDestinasi::resolveImageUrl($katImages[$idx % count($katImages)]) }}" class="w-100 object-fit-cover" style="height: 175px;" alt="{{ $kat->nama }}">
                             <div class="p-4 d-flex flex-column flex-grow-1 justify-content-between">
                                 <div>
                                     <h5 class="fw-bold mb-1">{{ $kat->nama }}</h5>
@@ -174,7 +174,7 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="card-toba h-100 overflow-hidden d-flex flex-column">
                         <div class="position-relative">
-                            <img src="{{ $item->fotoUtama ? asset('storage/' . $item->fotoUtama->path_foto) : 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80' }}" 
+                            <img src="{{ $item->url_foto_utama }}" 
                                  class="w-100 object-fit-cover" style="height: 200px;" alt="{{ $item->nama }}">
                             <span class="badge-otentik position-absolute top-0 start-0 m-3 shadow-sm">★ Otentik Batak</span>
                         </div>

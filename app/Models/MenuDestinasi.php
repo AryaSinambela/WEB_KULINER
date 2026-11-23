@@ -6,4 +6,9 @@ class MenuDestinasi extends Model {
     protected $guarded = ['id'];
     public $timestamps = false;
     public function destinasi() { return $this->belongsTo(Destinasi::class, 'destinasi_id'); }
+
+    public function getUrlFotoAttribute(): string
+    {
+        return FotoDestinasi::resolveImageUrl($this->path_foto, 'images/default/placeholder-menu.svg');
+    }
 }

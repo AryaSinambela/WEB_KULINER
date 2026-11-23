@@ -74,4 +74,10 @@ class Destinasi extends Model
     {
         return round($this->ulasans()->where('tipe_penilai', 'lokal')->avg('rating_umum') ?? 0, 1);
     }
+
+    public function getUrlFotoUtamaAttribute(): string
+    {
+        $path = $this->fotoUtama?->path_foto ?? $this->fotos->first()?->path_foto;
+        return FotoDestinasi::resolveImageUrl($path, 'images/default/placeholder-toko.svg');
+    }
 }

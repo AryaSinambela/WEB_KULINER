@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bgMenu" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#C9A24B"/>
+      <stop offset="100%" stop-color="#8B1E2D"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bgMenu)"/>
+  <rect x="24" y="24" width="752" height="452" rx="20" fill="none" stroke="#FFF8E7" stroke-width="3" stroke-dasharray="8,6"/>
+  <text x="400" y="225" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#FFFFFF" font-weight="bold">SAJIAN PUSAKA BATAK</text>
+  <text x="400" y="275" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#FFF8E7">Racikan Rempah Andaliman &amp; Asam Rias</text>
+  <text x="400" y="320" text-anchor="middle" font-family="monospace" font-size="15" fill="#FFF8E7">Simpan foto lokal di: public/images/menu/</text>
+</svg>

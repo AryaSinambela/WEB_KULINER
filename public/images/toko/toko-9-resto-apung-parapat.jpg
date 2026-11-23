@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#8B1E2D"/>
+  <rect x="22" y="22" width="756" height="456" rx="18" fill="none" stroke="#C9A24B" stroke-width="2.5" stroke-dasharray="10,6"/>
+  <text x="400" y="210" text-anchor="middle" font-family="Georgia, serif" font-size="30" fill="#FFD700" font-weight="bold">Resto Apung Ikan Bakar &amp; Sambal Tuk...</text>
+  <text x="400" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#F4EFE2">TOKO KULINER TOBA</text>
+  <text x="400" y="325" text-anchor="middle" font-family="monospace" font-size="15" fill="#C9A24B">Nama file foto: public/images/toko/toko-9-resto-apung-parapat.jpg</text>
+</svg>

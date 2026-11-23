@@ -97,7 +97,7 @@
             <div class="col-md-6 col-lg-3 destinasi-col">
                 <div class="card-toba h-100 overflow-hidden d-flex flex-column destinasi-card">
                     <div class="position-relative destinasi-img-wrap">
-                        <img src="{{ $item->fotoUtama ? asset('storage/' . $item->fotoUtama->path_foto) : 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80' }}" 
+                        <img src="{{ $item->url_foto_utama }}" 
                              class="w-100 object-fit-cover" style="height: 185px;" alt="{{ $item->nama }}" loading="lazy">
                         <div class="position-absolute top-0 start-0 m-2 d-flex flex-wrap gap-1">
                             @if($item->is_otentik_batak)

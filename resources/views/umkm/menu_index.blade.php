@@ -23,9 +23,7 @@
             @endphp
             <div class="col-md-6">
                 <div class="card-toba h-100 overflow-hidden d-flex flex-column">
-                    @if($menu->path_foto)
-                        <img src="{{ asset('storage/' . $menu->path_foto) }}" class="w-100 object-fit-cover" style="height: 170px;" alt="{{ $menu->nama_menu }}">
-                    @endif
+                    <img src="{{ $menu->url_foto }}" class="w-100 object-fit-cover border-bottom" style="height: 175px;" alt="{{ $menu->nama_menu }}">
                     <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
                         <div>
                             <div class="d-flex justify-content-between align-items-start gap-2 mb-1">

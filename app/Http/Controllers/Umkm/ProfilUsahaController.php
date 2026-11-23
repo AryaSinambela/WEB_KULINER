@@ -58,10 +58,12 @@ class ProfilUsahaController extends Controller
 
         if ($request->hasFile('foto_utama')) {
             FotoDestinasi::where('destinasi_id', $destinasi->id)->update(['is_utama' => false]);
-            $path = $request->file('foto_utama')->store('destinasi', 'public');
+            $file = $request->file('foto_utama');
+            $filename = \Illuminate\Support\Str::slug($destinasi->nama) . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/toko'), $filename);
             FotoDestinasi::create([
                 'destinasi_id' => $destinasi->id,
-                'path_foto'    => $path,
+                'path_foto'    => 'images/toko/' . $filename,
                 'is_utama'     => true,
             ]);
         }

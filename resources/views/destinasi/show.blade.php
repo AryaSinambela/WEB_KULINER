@@ -98,8 +98,8 @@
     @if($destinasi->fotos->count() > 0)
         <div class="row g-3 mb-4">
             @foreach($destinasi->fotos->take(3) as $foto)
-                <div class="{{ $loop->first ? 'col-md-6' : 'col-md-3' }}">
-                    <img src="{{ asset('storage/' . $foto->path_foto) }}" class="w-100 rounded-4 object-fit-cover border" style="height: 240px;" alt="{{ $destinasi->nama }}">
+                <div class="{{ $loop->first ? ($destinasi->fotos->count() == 1 ? 'col-12' : 'col-md-6') : 'col-md-3' }}">
+                    <img src="{{ $foto->url_foto }}" class="w-100 rounded-4 object-fit-cover border" style="height: 260px;" alt="{{ $destinasi->nama }}">
                 </div>
             @endforeach
         </div>
@@ -141,42 +141,45 @@
                         }) ?? $destinasi->ceritaBudaya->values()->get($idx) ?? $destinasi->ceritaBudaya->first();
                     @endphp
                     <div class="col-md-6">
-                        <div class="card-toba h-100 overflow-hidden d-flex flex-column p-4">
-                            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                                <div>
-                                    <span class="badge bg-light text-danger border mb-1" style="font-size: 10px;">
-                                        <i class="bi bi-shop me-1"></i> {{ $destinasi->nama }}
-                                    </span>
-                                    <h5 class="fw-bold mb-0">{{ $menu->nama_menu }}</h5>
-                                </div>
-                                <span class="badge bg-dark rounded-pill fs-6 px-3 py-2">Rp {{ number_format($menu->harga ?? 0, 0, ',', '.') }}</span>
-                            </div>
-
-                            <p class="text-muted small mb-3">{{ $menu->deskripsi }}</p>
-
-                            @if($ceritaMenu)
-                                <div class="p-3 rounded-4 border mt-auto" style="background-color: var(--toba-neutral);">
-                                    <div class="d-flex align-items-center justify-content-between mb-2">
-                                        <span class="badge-otentik" style="font-size: 10px;">
-                                            <i class="bi bi-book-half text-warning me-1"></i> CERITA &amp; FILOSOFI MENU INI
+                        <div class="card-toba h-100 overflow-hidden d-flex flex-column">
+                            <img src="{{ $menu->url_foto }}" class="w-100 object-fit-cover border-bottom" style="height: 190px;" alt="{{ $menu->nama_menu }}">
+                            <div class="p-4 d-flex flex-column flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                    <div>
+                                        <span class="badge bg-light text-danger border mb-1" style="font-size: 10px;">
+                                            <i class="bi bi-shop me-1"></i> {{ $destinasi->nama }}
                                         </span>
+                                        <h5 class="fw-bold mb-0">{{ $menu->nama_menu }}</h5>
                                     </div>
-                                    <h6 class="fw-bold small mb-2" style="color: var(--toba-primary);">{{ $ceritaMenu->judul }}</h6>
-                                    <div class="small text-muted mb-2" style="line-height: 1.6;">
-                                        <strong class="text-dark d-block">Asal-Usul Sajian:</strong>
-                                        {{ $ceritaMenu->asal_usul }}
-                                    </div>
-                                    <div class="small text-muted mb-2" style="line-height: 1.6;">
-                                        <strong class="text-dark d-block">Makna dalam Adat Batak:</strong>
-                                        {{ $ceritaMenu->makna_adat }}
-                                    </div>
-                                    @if($ceritaMenu->istilah_lokal)
-                                        <div class="p-2 rounded-3 bg-white border small mt-2">
-                                            <i class="bi bi-translate text-warning me-1"></i> <strong>Istilah Lokal:</strong> {{ $ceritaMenu->istilah_lokal }}
-                                        </div>
-                                    @endif
+                                    <span class="badge bg-dark rounded-pill fs-6 px-3 py-2">Rp {{ number_format($menu->harga ?? 0, 0, ',', '.') }}</span>
                                 </div>
-                            @endif
+
+                                <p class="text-muted small mb-3">{{ $menu->deskripsi }}</p>
+
+                                @if($ceritaMenu)
+                                    <div class="p-3 rounded-4 border mt-auto" style="background-color: var(--toba-neutral);">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <span class="badge-otentik" style="font-size: 10px;">
+                                                <i class="bi bi-book-half text-warning me-1"></i> CERITA &amp; FILOSOFI MENU INI
+                                            </span>
+                                        </div>
+                                        <h6 class="fw-bold small mb-2" style="color: var(--toba-primary);">{{ $ceritaMenu->judul }}</h6>
+                                        <div class="small text-muted mb-2" style="line-height: 1.6;">
+                                            <strong class="text-dark d-block">Asal-Usul Sajian:</strong>
+                                            {{ $ceritaMenu->asal_usul }}
+                                        </div>
+                                        <div class="small text-muted mb-2" style="line-height: 1.6;">
+                                            <strong class="text-dark d-block">Makna dalam Adat Batak:</strong>
+                                            {{ $ceritaMenu->makna_adat }}
+                                        </div>
+                                        @if($ceritaMenu->istilah_lokal)
+                                            <div class="p-2 rounded-3 bg-white border small mt-2">
+                                                <i class="bi bi-translate text-warning me-1"></i> <strong>Istilah Lokal:</strong> {{ $ceritaMenu->istilah_lokal }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 @empty
