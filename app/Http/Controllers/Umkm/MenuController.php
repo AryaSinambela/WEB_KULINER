@@ -45,7 +45,10 @@ class MenuController extends Controller
         ]);
 
         if ($request->hasFile('path_foto')) {
-            $validated['path_foto'] = $request->file('path_foto')->store('menu', 'public');
+            $file = $request->file('path_foto');
+            $filename = \Illuminate\Support\Str::slug($validated['nama_menu']) . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/menu'), $filename);
+            $validated['path_foto'] = 'images/menu/' . $filename;
         }
 
         MenuDestinasi::create([
@@ -91,7 +94,10 @@ class MenuController extends Controller
         ];
 
         if ($request->hasFile('path_foto')) {
-            $menuData['path_foto'] = $request->file('path_foto')->store('menu', 'public');
+            $file = $request->file('path_foto');
+            $filename = \Illuminate\Support\Str::slug($validated['nama_menu']) . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/menu'), $filename);
+            $menuData['path_foto'] = 'images/menu/' . $filename;
         }
 
         $menu->update($menuData);

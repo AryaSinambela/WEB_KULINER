@@ -11,11 +11,11 @@ class JelajahController extends Controller
 {
     public function index(Request $request)
     {
-        if (Destinasi::count() < 5) {
+        if (Destinasi::count() < 10 || \App\Models\FotoDestinasi::count() < 10) {
             app(\Database\Seeders\DatabaseSeeder::class)->run();
         }
 
-        $query = Destinasi::with(['wilayah', 'kategori', 'fotoUtama', 'ulasans', 'menus', 'pemilik'])
+        $query = Destinasi::with(['wilayah', 'kategori', 'fotoUtama', 'fotos', 'ulasans', 'menus', 'pemilik'])
             ->where('status_verifikasi', 'disetujui');
 
         // Filter Kata Kunci (nama destinasi, deskripsi, atau nama menu)

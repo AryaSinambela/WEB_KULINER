@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\CeritaBudaya;
 use App\Models\Destinasi;
+use App\Models\FotoDestinasi;
 use App\Models\KategoriMakanan;
 use App\Models\MenuDestinasi;
 use App\Models\Ulasan;
@@ -17,6 +18,13 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Pastikan folder gambar lokal tersedia di public/images/
+        foreach (['images/toko', 'images/menu', 'images/kategori', 'images/hero', 'images/default'] as $dir) {
+            if (!is_dir(public_path($dir))) {
+                @mkdir(public_path($dir), 0775, true);
+            }
+        }
+
         // 1. Akun Pengguna (Admin, UMKM, Warga Lokal, Wisatawan)
         $admin = User::updateOrCreate(['email' => 'admin@tobakuliner.id'], [
             'nama'          => 'Ir. Togar Simanjuntak (Kurator)',
@@ -70,13 +78,14 @@ class DatabaseSeeder extends Seeder
         $katDaging  = KategoriMakanan::firstOrCreate(['nama' => 'Olahan Daging Tradisi']);
         $katSambal  = KategoriMakanan::firstOrCreate(['nama' => 'Bumbu & Sambal Khas']);
 
-        // 4. Daftar Toko / Rumah Makan Nyata di Kawasan Danau Toba + Menu & Cerita Budaya per Menu
+        // 4. Daftar Toko / Rumah Makan Nyata di Kawasan Danau Toba + Penamaan File Foto Lokal + Menu & Cerita Budaya per Menu
         $stores = [
             // TOKO 1: BALIGE
             [
                 'wilayah_id' => $balige->id,
                 'kategori_id' => $katMie->id,
                 'nama' => 'Kedai Mie Gomak Kuah Andaliman Pak Marbun',
+                'foto_toko' => 'images/toko/toko-1-mie-gomak-marbun.jpg',
                 'deskripsi' => 'Toko sarapan legendaris di jantung Pasar Onan Balige sejak 1982. Spesialis mie lidi kuah santan kuning kental dengan getar rasa andaliman pegunungan Toba yang dimasak di atas tungku kayu aren.',
                 'alamat' => 'Jl. Bukit Barisan No. 14, Kompleks Pasar Onan Balige, Kab. Toba',
                 'latitude' => 2.3338000,
@@ -89,6 +98,7 @@ class DatabaseSeeder extends Seeder
                 'menus' => [
                     [
                         'nama_menu' => 'Mie Gomak Kuah Santan Andaliman',
+                        'path_foto' => 'images/menu/menu-1-mie-gomak-kuah.jpg',
                         'harga' => 18000,
                         'deskripsi' => 'Mie lidi kenyal khas Toba diguyur kuah santan kunyit, serai, asam rias, dan ulekan andaliman segar dengan telur rebus.',
                         'cerita' => [
@@ -100,6 +110,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Mie Gomak Goreng Bumbu Rias',
+                        'path_foto' => 'images/menu/menu-2-mie-gomak-goreng.jpg',
                         'harga' => 20000,
                         'deskripsi' => 'Mie lidi ditumis di atas wajan besi tebal menggunakan bunga rias (kecombrang), sawi kampung, dan sambal andaliman hijau.',
                         'cerita' => [
@@ -111,6 +122,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Lontong Sayur Labu Siam Kuah Gomak',
+                        'path_foto' => 'images/menu/menu-3-lontong-kuah-gomak.jpg',
                         'harga' => 17000,
                         'deskripsi' => 'Potongan lontong daun pisang disiram kuah gulai labu siam andaliman dan kerupuk merah.',
                         'cerita' => [
@@ -128,6 +140,7 @@ class DatabaseSeeder extends Seeder
                 'wilayah_id' => $pangururan->id,
                 'kategori_id' => $katIkan->id,
                 'nama' => 'Rumah Makan & Lapau Naniura Raja Nainggolan',
+                'foto_toko' => 'images/toko/toko-2-naniura-nainggolan.jpg',
                 'deskripsi' => 'Rumah makan pusaka di tepi perairan Pangururan yang melestarikan seni mematangkan ikan mas Danau Toba menggunakan perasan asam jungga tanpa api sesuai pakem juru masak kerajaan Batak.',
                 'alamat' => 'Jl. Putri Lopian No. 22, Pesisir Pangururan, Kab. Samosir',
                 'latitude' => 2.6085000,
@@ -140,6 +153,7 @@ class DatabaseSeeder extends Seeder
                 'menus' => [
                     [
                         'nama_menu' => 'Dekke Naniura Ikan Mas Asam Jungga',
+                        'path_foto' => 'images/menu/menu-4-dekke-naniura.jpg',
                         'harga' => 85000,
                         'deskripsi' => 'Fillet ikan mas segar Danau Toba dimarinasi air jeruk jungga selama 3 jam lalu dilumuri bumbu kuning kemiri sangrai, rias, dan andaliman.',
                         'cerita' => [
@@ -151,6 +165,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Ikan Mas Tombur Andaliman Pangururan',
+                        'path_foto' => 'images/menu/menu-5-ikan-mas-tombur.jpg',
                         'harga' => 65000,
                         'deskripsi' => 'Ikan mas bakar arang tempurung yang disiram bumbu tombur kental dari kemiri bakar, cabai rawit, rias, dan andaliman tumbuk.',
                         'cerita' => [
@@ -162,10 +177,11 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Sup Ikan Toba Asam Siala (Naniarsik Kuah)',
+                        'path_foto' => 'images/menu/menu-6-sup-ikan-asam-siala.jpg',
                         'harga' => 50000,
                         'deskripsi' => 'Sup bening kekuningan ikan mas dengan potongan buah asam siala (patikala) segar dan daun bawang Batak.',
                         'cerita' => [
-                            'judul' => 'Sup Ikan Toba Asam Siala: Kesegaran Kaldera Peng체at Stamina',
+                            'judul' => 'Sup Ikan Toba Asam Siala: Kesegaran Kaldera Penguat Stamina',
                             'asal_usul' => 'Racikan rumahan keluarga pesisir Samosir yang memanfaatkan buah patikala segar untuk menetralkan lemak ikan air tawar.',
                             'makna_adat' => 'Biasa disajikan bagi orang tua atau ibu yang baru melahirkan untuk memulihkan tenaga dan menghangatkan tubuh.',
                             'istilah_lokal' => 'Siala / Patikala = buah dari tanaman kecombrang yang berasa asam segar aromatik.',
@@ -179,6 +195,7 @@ class DatabaseSeeder extends Seeder
                 'wilayah_id' => $balige->id,
                 'kategori_id' => $katIkan->id,
                 'nama' => 'RM Arsik Ikan Mas Pusaka Boru Tobing',
+                'foto_toko' => 'images/toko/toko-3-arsik-boru-tobing.jpg',
                 'deskripsi' => 'Rumah makan keluarga di Balige yang terkenal dengan sajian Dekke Na Niarsik bersisik utuh yang dimasak perlahan selama 4 jam dengan alas batang rias dan kacang panjang lokal.',
                 'alamat' => 'Jl. Sisingamangaraja No. 88, Soposurung, Balige, Kab. Toba',
                 'latitude' => 2.3289000,
@@ -191,10 +208,11 @@ class DatabaseSeeder extends Seeder
                 'menus' => [
                     [
                         'nama_menu' => 'Dekke Na Niarsik Ikan Mas Adat Utuh',
+                        'path_foto' => 'images/menu/menu-7-dekke-na-niarsik.jpg',
                         'harga' => 75000,
                         'deskripsi' => 'Ikan mas utuh bersisik dimasak kering bersama bumbu kuning andaliman, bunga kecombrang, asam gelugur, dan lokio (bawang Batak).',
                         'cerita' => [
-                            'judul' => 'Dekke Na Niarsik Ikan Mas Adat Utuh:Dekke Sitiotio Pembawa Berkat Kehidupan',
+                            'judul' => 'Dekke Na Niarsik Ikan Mas Adat Utuh: Dekke Sitiotio Pembawa Berkat Kehidupan',
                             'asal_usul' => 'Merupakan kuliner paling sakral dalam kebudayaan Batak Toba yang wajib hadir dalam setiap siklus kehidupan: kelahiran, pernikahan, hingga penghormatan orang tua.',
                             'makna_adat' => 'Disebut sebagai Dekke Simudur-udur; ikan disajikan utuh dari kepala hingga ekor menghadap ke depan sebagai doa agar kehidupan keluarga berjalan searah menuju kemakmuran.',
                             'istilah_lokal' => 'Na Niarsik = proses memasak ikan dengan bumbu rempah hingga air kuahnya menyusut kering (marsik) dan meresap ke tulang.',
@@ -202,6 +220,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Sayur Daun Ubi Tumbuk Rimbang Santan',
+                        'path_foto' => 'images/menu/menu-8-daun-ubi-tumbuk.jpg',
                         'harga' => 20000,
                         'deskripsi' => 'Daun singkong muda ditumbuk kasar di lesung batu bersama buah rimbang (cepokak), bunga kincung, dan santan gurih.',
                         'cerita' => [
@@ -219,6 +238,7 @@ class DatabaseSeeder extends Seeder
                 'wilayah_id' => $laguboti->id,
                 'kategori_id' => $katDaging->id,
                 'nama' => 'Rumah Makan Lomok-Lomok & Panggang Situmorang',
+                'foto_toko' => 'images/toko/toko-4-lomok-panggang-situmorang.jpg',
                 'deskripsi' => 'Destinasi kuliner daging tradisional di tepi jalan lintas Sumatera Laguboti yang menghidangkan panggang garing beraroma arang kemiri dan sambal rias gota.',
                 'alamat' => 'Jl. Lintas Sumatera Km 7, Pasar Laguboti, Kab. Toba',
                 'latitude' => 2.3521000,
@@ -231,6 +251,7 @@ class DatabaseSeeder extends Seeder
                 'menus' => [
                     [
                         'nama_menu' => 'Saksang & Lomok-Lomok Rempah Andaliman',
+                        'path_foto' => 'images/menu/menu-9-saksang-lomok-andaliman.jpg',
                         'harga' => 40000,
                         'deskripsi' => 'Potongan daging cincang dimasak dengan kelapa gongseng (sangrai) tumbuk, serai, daun jeruk purut, ketumbar, dan andaliman segar.',
                         'cerita' => [
@@ -242,6 +263,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Panggang Karo-Toba Sambal Rias Andaliman',
+                        'path_foto' => 'images/menu/menu-10-panggang-sambal-rias.jpg',
                         'harga' => 45000,
                         'deskripsi' => 'Daging panggang tiga lapis yang dipanggang di atas bara arang hingga kulitnya renyah, disajikan dengan kuah sop bening.',
                         'cerita' => [
@@ -259,6 +281,7 @@ class DatabaseSeeder extends Seeder
                 'wilayah_id' => $porsea->id,
                 'kategori_id' => $katKudapan->id,
                 'nama' => 'Toko Kue Adat Lapet & Ombus-Ombus Inang Boru Sitorus',
+                'foto_toko' => 'images/toko/toko-5-kue-adat-boru-sitorus.jpg',
                 'deskripsi' => 'Pusat kudapan tradisional Batak di Porsea yang selalu mengepulkan uap kukusan daun pisang hangat setiap pagi dan sore hari.',
                 'alamat' => 'Jl. Patuan Nagari No. 31, Simpang Pasar Porsea, Kab. Toba',
                 'latitude' => 2.4412000,
@@ -271,6 +294,7 @@ class DatabaseSeeder extends Seeder
                 'menus' => [
                     [
                         'nama_menu' => 'Lapet Bulung Pisang Gula Aren (Isi 5)',
+                        'path_foto' => 'images/menu/menu-11-lapet-bulung-pisang.jpg',
                         'harga' => 15000,
                         'deskripsi' => 'Kue tepung beras tumbuk bercampur parutan kelapa muda dengan inti gula aren cair, dibungkus daun pisang berbentuk limas piramida.',
                         'cerita' => [
@@ -282,6 +306,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Pohul-Pohul Tepung Beras Kepal Adat',
+                        'path_foto' => 'images/menu/menu-12-pohul-pohul-adat.jpg',
                         'harga' => 20000,
                         'deskripsi' => 'Adonan tepung beras mentah/kukus, kelapa parut, dan gula merah yang dikepal langsung dengan lima jari tangan hingga menyisakan lekukan jari.',
                         'cerita' => [
@@ -293,6 +318,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Sasagun Kelapa Gongseng Gula Merah',
+                        'path_foto' => 'images/menu/menu-13-sasagun-kelapa.jpg',
                         'harga' => 25000,
                         'deskripsi' => 'Tepung beras yang disangrai kering bersama kelapa parut hingga berwarna cokelat keemasan, dinikmati bersama taburan gula aren.',
                         'cerita' => [
@@ -310,6 +336,7 @@ class DatabaseSeeder extends Seeder
                 'wilayah_id' => $siborong->id,
                 'kategori_id' => $katKudapan->id,
                 'nama' => 'Kedai Ombus-Ombus No. 1 & Kopi Panas Pak L. Simatupang',
+                'foto_toko' => 'images/toko/toko-6-ombus-ombus-simatupang.jpg',
                 'deskripsi' => 'Toko legendaris di terminal Siborongborong yang telah berdiri sejak tahun 1970-an, menghidangkan Ombus-ombus panas langsung dari dandang kukusan bersama kopi tubruk.',
                 'alamat' => 'Jl. Siliwangi No. 10, Pasar Siborongborong, Kab. Tapanuli Utara',
                 'latitude' => 2.2156000,
@@ -322,6 +349,7 @@ class DatabaseSeeder extends Seeder
                 'menus' => [
                     [
                         'nama_menu' => 'Ombus-Ombus Panas Gula Merah (Seporsi 5 Buah)',
+                        'path_foto' => 'images/menu/menu-14-ombus-ombus-panas.jpg',
                         'harga' => 15000,
                         'deskripsi' => 'Kue tepung beras hangat bertekstur lembut dengan lelehan gula aren di bagian tengah, disajikan mengepul dari kukusan.',
                         'cerita' => [
@@ -333,6 +361,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Kopi Tubruk Arabika Siborongborong',
+                        'path_foto' => 'images/menu/menu-15-kopi-tubruk-siborongborong.jpg',
                         'harga' => 12000,
                         'deskripsi' => 'Seduhan kopi hitam murni gilingan kasar dari biji arabika dataran tinggi 1.300 mdpl dengan aroma cokelat dan rempah.',
                         'cerita' => [
@@ -350,6 +379,7 @@ class DatabaseSeeder extends Seeder
                 'wilayah_id' => $lintong->id,
                 'kategori_id' => $katKopi->id,
                 'nama' => 'Roastery & Kedai Kopi Arabika Lintong Nihuta Hutasoit',
+                'foto_toko' => 'images/toko/toko-7-roastery-kopi-lintong.jpg',
                 'deskripsi' => 'Kedai kopi kebun dan rumah sangrai di dataran tinggi Humbang Hasundutan yang menyajikan kopi Single Origin Lintong kelas dunia langsung dengan pemandangan perbukitan Toba.',
                 'alamat' => 'Jl. Dolok Sanggul - Siborongborong Km 9, Lintong Nihuta, Kab. Humbang Hasundutan',
                 'latitude' => 2.2684000,
@@ -362,6 +392,7 @@ class DatabaseSeeder extends Seeder
                 'menus' => [
                     [
                         'nama_menu' => 'V60 Manual Brew Arabika Lintong Blue Batak',
+                        'path_foto' => 'images/menu/menu-16-kopi-arabika-lintong.jpg',
                         'harga' => 25000,
                         'deskripsi' => 'Kopi seduh manual dari biji Arabika varietas Sigararutang proses giling basah (wet-hulled) dengan cita rasa herbal, spicy, dan keasaman bersih.',
                         'cerita' => [
@@ -373,6 +404,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Teh Daun Kopi Tradisional (Kawa Daun Toba) & Pisang Goreng',
+                        'path_foto' => 'images/menu/menu-17-teh-daun-kopi.jpg',
                         'harga' => 20000,
                         'deskripsi' => 'Seduhan pucuk daun kopi pilihan yang dikeringkan di atas perapian kayu, disajikan hangat dengan gula aren dan pisang kepok goreng.',
                         'cerita' => [
@@ -390,6 +422,7 @@ class DatabaseSeeder extends Seeder
                 'wilayah_id' => $tarutung->id,
                 'kategori_id' => $katKudapan->id,
                 'nama' => 'Toko Pusat Oleh-Oleh Kacang Sihobuk Ny. Silitonga',
+                'foto_toko' => 'images/toko/toko-8-kacang-sihobuk-silitonga.jpg',
                 'deskripsi' => 'Toko pusat kerajinan kuliner Kacang Sihobuk asli di lembah Silindung Tarutung yang menyangrai kacang tanah pilihan menggunakan pasir hitam gunung di atas kuali tanah liat.',
                 'alamat' => 'Desa Sihobuk, Jl. Tarutung - Sibolga No. 19, Tarutung, Kab. Tapanuli Utara',
                 'latitude' => 2.0235000,
@@ -402,6 +435,7 @@ class DatabaseSeeder extends Seeder
                 'menus' => [
                     [
                         'nama_menu' => 'Kacang Sihobuk Sangrai Pasir Gunung (Kaleng Besar)',
+                        'path_foto' => 'images/menu/menu-18-kacang-sihobuk.jpg',
                         'harga' => 45000,
                         'deskripsi' => 'Kacang tanah kulit ari yang direndam bumbu manis-gurih rahasia, dijemur matahari, lalu digongseng dengan pasir vulkanik panas hingga renyah merata.',
                         'cerita' => [
@@ -413,6 +447,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Bandrek Jahe Merah Andaliman Tarutung',
+                        'path_foto' => 'images/menu/menu-19-bandrek-andaliman.jpg',
                         'harga' => 18000,
                         'deskripsi' => 'Minuman rempah hangat dari jahe merah tumbuk, kayu manis, cengkeh, gula aren, dan sedikit sentuhan bulir andaliman.',
                         'cerita' => [
@@ -430,6 +465,7 @@ class DatabaseSeeder extends Seeder
                 'wilayah_id' => $parapat->id,
                 'kategori_id' => $katIkan->id,
                 'nama' => 'Resto Apung Ikan Bakar & Sambal Tuktuk Pantai Bebas Parapat',
+                'foto_toko' => 'images/toko/toko-9-resto-apung-parapat.jpg',
                 'deskripsi' => 'Rumah makan tepi danau di kawasan Pantai Bebas Parapat dengan pemandangan langsung ke Pulau Samosir, menyajikan olahan ikan nila dan pora-pora segar hasil tangkapan nelayan pagi.',
                 'alamat' => 'Jl. Sisingamangaraja No. 105, Kawasan Pantai Bebas Parapat, Kab. Simalungun',
                 'latitude' => 2.6632000,
@@ -442,6 +478,7 @@ class DatabaseSeeder extends Seeder
                 'menus' => [
                     [
                         'nama_menu' => 'Ikan Pora-Pora Goreng Tepung Renyah Sambal Andaliman',
+                        'path_foto' => 'images/menu/menu-20-ikan-pora-pora.jpg',
                         'harga' => 35000,
                         'deskripsi' => 'Ikan kecil endemik perairan jernih Danau Toba yang digoreng garing utuh lalu disajikan bersama cocolan sambal andaliman jeruk nipis.',
                         'cerita' => [
@@ -452,7 +489,8 @@ class DatabaseSeeder extends Seeder
                         ],
                     ],
                     [
-                        'nama_menu' => 'Ikan Nila Bakar Bambu Sambal Tuktuk Asoč',
+                        'nama_menu' => 'Ikan Nila Bakar Bambu Sambal Tuktuk Aso-Aso',
+                        'path_foto' => 'images/menu/menu-21-ikan-nila-sambal-tuktuk.jpg',
                         'harga' => 60000,
                         'deskripsi' => 'Ikan nila keramba air dalam dibakar dengan olesan bumbu kunyit kemiri, disajikan dengan Sambal Tuktuk khas dari ikan aso-aso kering.',
                         'cerita' => [
@@ -470,6 +508,7 @@ class DatabaseSeeder extends Seeder
                 'wilayah_id' => $simanindo->id,
                 'kategori_id' => $katSambal->id,
                 'nama' => 'Dapur Warisan Inang Tuktuk Siadong & Rumah Sambal Andaliman',
+                'foto_toko' => 'images/toko/toko-10-dapur-inang-tuktuk.jpg',
                 'deskripsi' => 'Toko kuliner dan galeri rempah di semenanjung wisata Tuktuk Siadong, Samosir, tempat wisatawan mencicipi aneka olahan sambal Batak serta hidangan dali ni horbo (keju susu kerbau tradisional).',
                 'alamat' => 'Jl. Lingkar Tuktuk Siadong No. 45, Kec. Simanindo, Pulau Samosir',
                 'latitude' => 2.6718000,
@@ -482,6 +521,7 @@ class DatabaseSeeder extends Seeder
                 'menus' => [
                     [
                         'nama_menu' => 'Dali Ni Horbo (Tahu Susu Kerbau Masak Arsik)',
+                        'path_foto' => 'images/menu/menu-22-dali-ni-horbo.jpg',
                         'harga' => 65000,
                         'deskripsi' => 'Susu kerbau segar Samosir yang dipadatkan secara alami menggunakan sari buah pepaya dan air nanas tanpa bahan kimia, dimasak dengan kuah kuning arsik.',
                         'cerita' => [
@@ -493,6 +533,7 @@ class DatabaseSeeder extends Seeder
                     ],
                     [
                         'nama_menu' => 'Paket Tiga Rasa Sambal Pusaka (Tuktuk, Rias, & Andaliman Hijau)',
+                        'path_foto' => 'images/menu/menu-23-trio-sambal-pusaka.jpg',
                         'harga' => 30000,
                         'deskripsi' => 'Tiga jenis sambal khas Batak yang diulek segar di cobek batu, disajikan bersama nasi hangat, ikan goreng, dan lalapan terong rebus.',
                         'cerita' => [
@@ -508,7 +549,8 @@ class DatabaseSeeder extends Seeder
 
         foreach ($stores as $storeData) {
             $menus = $storeData['menus'];
-            unset($storeData['menus']);
+            $fotoToko = $storeData['foto_toko'];
+            unset($storeData['menus'], $storeData['foto_toko']);
 
             $dest = Destinasi::updateOrCreate(
                 ['nama' => $storeData['nama']],
@@ -520,12 +562,23 @@ class DatabaseSeeder extends Seeder
                 ])
             );
 
+            // Buat file gambar placeholder lokal jika user belum menaruh file foto asli
+            $this->ensureLocalPlaceholderFile($fotoToko, $dest->nama, 'TOKO KULINER TOBA', '#8B1E2D');
+
+            FotoDestinasi::updateOrCreate(
+                ['destinasi_id' => $dest->id, 'is_utama' => true],
+                ['path_foto' => $fotoToko]
+            );
+
             foreach ($menus as $m) {
+                $this->ensureLocalPlaceholderFile($m['path_foto'], $m['nama_menu'], $dest->nama, '#5C2D16');
+
                 MenuDestinasi::updateOrCreate(
                     ['destinasi_id' => $dest->id, 'nama_menu' => $m['nama_menu']],
                     [
                         'harga'     => $m['harga'],
                         'deskripsi' => $m['deskripsi'],
+                        'path_foto' => $m['path_foto'],
                     ]
                 );
 
@@ -618,5 +671,28 @@ class DatabaseSeeder extends Seeder
         foreach ($wisataAlams as $wa) {
             WisataAlam::updateOrCreate(['nama' => $wa['nama']], $wa);
         }
+    }
+
+    private function ensureLocalPlaceholderFile(string $relativePath, string $title, string $subtitle, string $bgColor): void
+    {
+        $fullPath = public_path($relativePath);
+        if (file_exists($fullPath)) {
+            return;
+        }
+
+        $safeTitle = htmlspecialchars(mb_strimwidth($title, 0, 38, '...'), ENT_QUOTES, 'UTF-8');
+        $safeSub   = htmlspecialchars(mb_strimwidth($subtitle, 0, 52, '...'), ENT_QUOTES, 'UTF-8');
+        $safeFile  = htmlspecialchars('public/' . $relativePath, ENT_QUOTES, 'UTF-8');
+
+        $svg = <<<SVG
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="{$bgColor}"/>
+  <rect x="22" y="22" width="756" height="456" rx="18" fill="none" stroke="#C9A24B" stroke-width="2.5" stroke-dasharray="10,6"/>
+  <text x="400" y="210" text-anchor="middle" font-family="Georgia, serif" font-size="30" fill="#FFD700" font-weight="bold">{$safeTitle}</text>
+  <text x="400" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#F4EFE2">{$safeSub}</text>
+  <text x="400" y="325" text-anchor="middle" font-family="monospace" font-size="15" fill="#C9A24B">Nama file foto: {$safeFile}</text>
+</svg>
+SVG;
+        @file_put_contents($fullPath, $svg);
     }
 }

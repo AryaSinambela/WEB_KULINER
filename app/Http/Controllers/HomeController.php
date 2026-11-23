@@ -11,7 +11,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        if (Destinasi::count() < 5) {
+        if (Destinasi::count() < 10 || \App\Models\FotoDestinasi::count() < 10) {
             app(\Database\Seeders\DatabaseSeeder::class)->run();
         }
 

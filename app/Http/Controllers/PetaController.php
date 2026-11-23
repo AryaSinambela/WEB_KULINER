@@ -13,7 +13,7 @@ class PetaController extends Controller
 {
     public function index()
     {
-        if (Destinasi::count() < 5) {
+        if (Destinasi::count() < 10 || \App\Models\FotoDestinasi::count() < 10) {
             app(\Database\Seeders\DatabaseSeeder::class)->run();
         }
 
@@ -25,7 +25,7 @@ class PetaController extends Controller
 
     public function data(Request $request)
     {
-        $query = Destinasi::with(['wilayah', 'kategori', 'fotoUtama', 'ulasans', 'pemilik', 'menus'])
+        $query = Destinasi::with(['wilayah', 'kategori', 'fotoUtama', 'fotos', 'ulasans', 'pemilik', 'menus'])
             ->where('status_verifikasi', 'disetujui');
 
         if ($request->filled('q')) {
@@ -116,7 +116,7 @@ class PetaController extends Controller
                 'is_otentik_batak' => (bool) $item->is_otentik_batak,
                 'rating_wisatawan' => $item->rating_wisatawan ?: 0,
                 'rating_lokal' => $item->rating_lokal ?: 0,
-                'foto' => $item->fotoUtama ? asset('storage/' . $item->fotoUtama->path_foto) : null,
+                'foto' => $item->url_foto_utama,
                 'jarak_km' => $item->jarak_km ?? null,
                 'url_detail' => route('destinasi.show', $item->id),
                 'url_rute' => route('destinasi.rute', $item->id),

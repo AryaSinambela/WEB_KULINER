@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+  <defs>
+    <linearGradient id="heroGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6B1420"/>
+      <stop offset="55%" stop-color="#8B1E2D"/>
+      <stop offset="100%" stop-color="#C9A24B"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="600" fill="url(#heroGrad)"/>
+  <rect x="30" y="30" width="840" height="540" rx="24" fill="none" stroke="#F4EFE2" stroke-width="2" opacity="0.5"/>
+  <circle cx="450" cy="240" r="95" fill="#F4EFE2" opacity="0.12"/>
+  <text x="450" y="235" text-anchor="middle" font-family="Georgia, serif" font-size="46" fill="#FFD700" font-weight="bold">ARSIK IKAN MAS PUSAKA</text>
+  <text x="450" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#FFFFFF">Kuliner Adat Kaldera Danau Toba • Balige</text>
+  <text x="450" y="350" text-anchor="middle" font-family="monospace" font-size="16" fill="#F4EFE2">Ganti dengan foto: public/images/hero/hero-arsik-toba.jpg</text>
+</svg>
