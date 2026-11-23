@@ -18,7 +18,9 @@ class NotifikasiController extends Controller
 
     public function bacaSemua()
     {
-        Notifikasi::where('user_id', Auth::id())->update(['dibaca' => true]);
+        Notifikasi::where('user_id', Auth::id())
+            ->whereNull('dibaca_pada')
+            ->update(['dibaca_pada' => now()]);
 
         return back()->with('success', 'Semua notifikasi telah ditandai sudah dibaca.');
     }

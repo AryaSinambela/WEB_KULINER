@@ -67,8 +67,16 @@
                             </a>
                         @endif
 
+                        @php
+                            $unreadNotifCount = auth()->check() ? \App\Models\Notifikasi::where('user_id', auth()->id())->whereNull('dibaca_pada')->count() : 0;
+                        @endphp
                         <a href="{{ route('notifikasi.index') }}" class="btn btn-light rounded-circle position-relative border d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;" title="Notifikasi">
                             <i class="bi bi-bell"></i>
+                            @if($unreadNotifCount > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">
+                                    {{ $unreadNotifCount > 9 ? '9+' : $unreadNotifCount }}
+                                </span>
+                            @endif
                         </a>
 
                         <div class="dropdown">

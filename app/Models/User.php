@@ -26,7 +26,8 @@ class User extends Authenticatable
         'password', 
         'nomor_telepon', 
         'role', 
-        'tipe_penilai'
+        'tipe_penilai',
+        'is_aktif',
     ];
 
     /**
@@ -39,6 +40,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_aktif' => 'boolean',
         ];
     }
         public function itineraries()

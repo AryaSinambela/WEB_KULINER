@@ -20,6 +20,13 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            if (!Auth::user()->is_aktif) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors(['email' => 'Akun Anda sedang dinonaktifkan / diblokir oleh Administrator.'])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
             $role = Auth::user()->role;
 
