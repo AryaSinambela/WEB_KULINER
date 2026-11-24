@@ -1,16 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
+    /* Toba Culinary Heritage & Mapping Design Tokens */
     --toba-primary: #8B1E2D;
-    --toba-primary-hover: #6E1622;
+    --toba-primary-dark: #6B0119;
+    --toba-primary-hover: #6E1623;
+    --toba-primary-fixed: #FFDADA;
     --toba-secondary: #C9A24B;
-    --toba-secondary-light: #F7F0DC;
+    --toba-secondary-container: #FDD275;
+    --toba-secondary-light: #FDF7E7;
+    --toba-on-secondary: #7A5A1A;
     --toba-tertiary: #2B1B17;
+    --toba-on-surface: #1D1C15;
+    --toba-muted: #6B5A52;
     --toba-neutral: #FAF5EA;
     --toba-surface: #FFFFFF;
-    --toba-border: #E6DEC8;
-    --toba-muted: #6E5D57;
-    --page-padding-x: clamp(1rem, 3vw, 3rem);
+    --toba-surface-low: #F8F3E8;
+    --toba-surface-container: #F2EDE3;
+    --toba-surface-high: #EDE8DD;
+    --toba-border: #E8DFC8;
+    --page-padding-x: clamp(1rem, 4vw, 4rem);
 }
 
 *, *::before, *::after {
@@ -26,6 +35,8 @@ html, body {
     background-color: var(--toba-neutral);
     color: var(--toba-tertiary);
     font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     overflow-x: clip;
 }
@@ -46,35 +57,49 @@ h1, h2, h3, h4, h5, h6, .font-headline {
     word-wrap: break-word;
 }
 
+.text-maroon {
+    color: var(--toba-primary) !important;
+}
+
 /* =========================================================
-   1. AUTO-FIT & PADDING SERAGAM TANPA OVERFLOW HORIZONTAL
+   1. GORGA ACCENT TRIM & STRUCTURAL CONTAINERS
    ========================================================= */
+.gorga-trim {
+    height: 3px;
+    width: 100%;
+    background: repeating-linear-gradient(
+        90deg,
+        #1A1716 0px,
+        #1A1716 18px,
+        #8B1E2D 18px,
+        #8B1E2D 42px,
+        #F2E6CE 42px,
+        #F2E6CE 54px
+    );
+}
+
 .container,
 .container-fluid,
 .container-toba {
     width: 100%;
-    max-width: 100%;
+    max-width: 1340px;
     padding-left: var(--page-padding-x) !important;
     padding-right: var(--page-padding-x) !important;
     margin-left: auto;
     margin-right: auto;
 }
 
-/* Mencegah .row Bootstrap meluber keluar container */
-.container > .row,
-.container-fluid > .row,
-.container-toba > .row {
-    margin-left: calc(-0.5 * var(--bs-gutter-x));
-    margin-right: calc(-0.5 * var(--bs-gutter-x));
+.container-fluid {
+    max-width: 100%;
 }
 
 /* =========================================================
-   2. EFEK POP-UP INTERAKTIF (AMAN DARI HORIZONTAL SCROLL)
+   2. ELEVATION, CARDS & COMPONENT SURFACES
    ========================================================= */
 @keyframes popIn {
     0% {
         opacity: 0;
-        transform: translateY(14px);
+        transform: translateY(12px);
     }
     100% {
         opacity: 1;
@@ -83,124 +108,184 @@ h1, h2, h3, h4, h5, h6, .font-headline {
 }
 
 .pop-in {
-    animation: popIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: popIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Level 1 Surface Card */
 .card-toba {
     background-color: var(--toba-surface);
-    border: 1px solid rgba(230, 222, 200, 0.9);
-    border-radius: 20px;
-    box-shadow: 0 8px 24px -8px rgba(43, 27, 23, 0.06);
-    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.28s ease,
-                border-color 0.25s ease;
-    will-change: transform;
+    border: 1px solid var(--toba-border);
+    border-radius: 16px;
+    box-shadow: 0px 4px 16px -2px rgba(43, 27, 23, 0.06),
+                0px 1px 3px 0px rgba(43, 27, 23, 0.04);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.25s ease,
+                border-color 0.22s ease;
 }
 
 .card-toba:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
     border-color: var(--toba-secondary);
-    box-shadow: 0 20px 40px -12px rgba(43, 27, 23, 0.14),
-                0 0 0 2px rgba(201, 162, 75, 0.18);
+    box-shadow: 0px 16px 36px -6px rgba(43, 27, 23, 0.12),
+                0px 4px 12px -2px rgba(43, 27, 23, 0.06);
 }
 
-.card-toba:active {
-    transform: translateY(-1px);
+/* Level 2 Surface Container (Beige/Warm Ivory) */
+.surface-container-toba {
+    background-color: var(--toba-surface-container);
+    border: 1px solid var(--toba-border);
+    border-radius: 16px;
 }
 
-/* Efek Pop-Up pada Modal Bootstrap */
-.modal.fade .modal-dialog {
-    transform: scale(0.9) translateY(18px);
-    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.22s ease;
-}
-.modal.show .modal-dialog {
-    transform: scale(1) translateY(0);
+/* Hero Floating Callout Card */
+.hero-floating-callout {
+    position: absolute;
+    bottom: -14px;
+    left: -22px;
+    background: #FFFFFF;
+    border: 1px solid var(--toba-border);
+    border-radius: 14px;
+    padding: 10px 14px;
+    max-width: 245px;
+    box-shadow: 0px 16px 36px -6px rgba(43, 27, 23, 0.15);
+    z-index: 5;
 }
 
-/* Tombol dengan Efek Pop-Up Tactile */
+/* =========================================================
+   3. BUTTONS, BADGES & FILTER CHIPS (DESIGN SYSTEM)
+   ========================================================= */
 .btn-toba-primary {
-    background: linear-gradient(135deg, #9A2233 0%, #7A1826 100%);
+    background-color: #8B1E2D;
     color: #FFFFFF;
-    border: none;
+    border: 1.5px solid #8B1E2D;
     border-radius: 12px;
     font-weight: 600;
-    box-shadow: 0 4px 14px rgba(139, 30, 45, 0.25);
-    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+    box-shadow: 0 4px 12px rgba(139, 30, 45, 0.22);
+    transition: all 0.2s ease;
 }
 .btn-toba-primary:hover {
-    background: linear-gradient(135deg, #8B1E2D 0%, #5F111C 100%);
+    background-color: #6E1623;
+    border-color: #6E1623;
     color: #FFFFFF;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(139, 30, 45, 0.35);
-}
-.btn-toba-primary:active {
-    transform: scale(0.98);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(139, 30, 45, 0.32);
 }
 
 .btn-toba-secondary {
-    background-color: #EFE9DA;
+    background-color: #F2EDE3;
     color: var(--toba-tertiary);
     border: 1px solid var(--toba-border);
     border-radius: 12px;
     font-weight: 600;
-    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 .btn-toba-secondary:hover {
-    background-color: #E4DBC6;
-    transform: translateY(-2px);
+    background-color: #E7E2D7;
+    color: var(--toba-primary);
+    border-color: var(--toba-secondary);
 }
 
 .btn-toba-outlined {
-    background-color: rgba(255, 255, 255, 0.75);
-    color: var(--toba-tertiary);
-    border: 1.5px solid var(--toba-border);
+    background-color: #FFFFFF;
+    color: #8B1E2D;
+    border: 1.5px solid #8B1E2D;
     border-radius: 12px;
     font-weight: 600;
-    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 .btn-toba-outlined:hover {
-    border-color: var(--toba-primary);
-    color: var(--toba-primary);
+    background-color: #8B1E2D;
+    color: #FFFFFF;
+}
+
+.btn-toba-gold {
+    background-color: #FDD275;
+    color: #261A00;
+    border: 1px solid #C9A24B;
+    border-radius: 10px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+.btn-toba-gold:hover {
+    background-color: #EBC166;
+    color: #261A00;
+    transform: translateY(-1px);
+}
+
+/* Kuliner Otentik Batak Badge */
+.badge-otentik {
+    background-color: #FDF7E7;
+    color: #7A5A1A;
+    border: 1px solid #C9A24B;
+    font-weight: 600;
+    font-size: 11px;
+    padding: 4px 11px;
+    border-radius: 9999px;
+    letter-spacing: 0.02em;
+}
+
+/* Maroon Pill Tag */
+.badge-maroon-soft {
+    background-color: #FFDADA;
+    color: #6B0119;
+    border: 1px solid #DEBFBF;
+    font-weight: 700;
+    font-size: 10px;
+    padding: 4px 11px;
+    border-radius: 9999px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Filter Chips */
+.chip-toba {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     background-color: #FFFFFF;
-    transform: translateY(-2px);
+    border: 1px solid #E8DFC8;
+    color: #574142;
+    padding: 5px 13px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.18s ease;
+}
+.chip-toba:hover, .chip-toba.active {
+    background-color: #8B1E2D;
+    color: #FFFFFF;
+    border-color: #8B1E2D;
+}
+
+/* Input Fields */
+.form-control:focus, .form-select:focus {
+    border-color: #8B1E2D !important;
+    box-shadow: 0 0 0 3px rgba(139, 30, 45, 0.15) !important;
 }
 
 /* =========================================================
-   3. HERO, BADGE, NAVBAR & RESPONSIVE BREAKPOINTS
+   4. NAVBAR, HERO & FOOTER
    ========================================================= */
-.hero-toba {
-    background: radial-gradient(circle at 85% 20%, rgba(201, 162, 75, 0.15) 0%, transparent 45%),
-                radial-gradient(circle at 10% 80%, rgba(139, 30, 45, 0.08) 0%, transparent 45%),
-                var(--toba-neutral);
+.navbar-toba {
+    background-color: rgba(254, 249, 238, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--toba-border);
 }
 
-.badge-otentik {
-    background: linear-gradient(135deg, #FDF8EB 0%, #F4E7C5 100%);
-    color: #72530E;
-    border: 1px solid #D9B765;
-    font-weight: 600;
-    font-size: 0.75rem;
-    padding: 5px 12px;
-    border-radius: 999px;
-}
-
-.navbar-toba {
-    background-color: rgba(250, 245, 234, 0.92);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(230, 222, 200, 0.75);
+.hero-toba {
+    background-color: var(--toba-neutral);
 }
 
 .footer-toba {
-    background: linear-gradient(180deg, #5C121C 0%, #3E0B12 100%);
-    color: #FAF5EA;
+    background: linear-gradient(180deg, #6B0119 0%, #4A0010 100%);
+    color: #F5F0E5;
 }
 
 /* =========================================================
-   4. OPTIMASI RESPONSIVE HANDPHONE & TABLET (MOBILE-FIRST)
+   5. RESPONSIVE BREAKPOINTS (MOBILE & TABLET)
    ========================================================= */
-/* Tablet & Layar Menengah (<= 991.98px) */
 @media (max-width: 991.98px) {
     .navbar-collapse {
         background-color: var(--toba-surface);
@@ -217,6 +302,11 @@ h1, h2, h3, h4, h5, h6, .font-headline {
     .navbar-nav .nav-link.active {
         background-color: var(--toba-neutral);
     }
+    .hero-floating-callout {
+        position: static;
+        max-width: 100%;
+        margin-top: 10px;
+    }
     #mapToba {
         height: 480px !important;
         min-height: 440px !important;
@@ -228,28 +318,18 @@ h1, h2, h3, h4, h5, h6, .font-headline {
     }
 }
 
-/* Handphone (<= 767.98px) */
 @media (max-width: 767.98px) {
     :root {
-        --page-padding-x: 0.9rem;
+        --page-padding-x: 1rem;
     }
     .display-4, .display-5 {
-        font-size: 1.65rem !important;
-        line-height: 1.25 !important;
+        font-size: 30px !important;
+        line-height: 38px !important;
     }
-    h1, .h1 { font-size: 1.5rem !important; }
-    h2, .h2 { font-size: 1.3rem !important; }
-    h3, .h3 { font-size: 1.15rem !important; }
+    h1, .h1 { font-size: 26px !important; }
+    h2, .h2 { font-size: 22px !important; }
+    h3, .h3 { font-size: 18px !important; }
 
-    .card-toba {
-        border-radius: 16px;
-    }
-    .hero-toba {
-        padding-top: 1.75rem !important;
-        padding-bottom: 2rem !important;
-    }
-
-    /* Tab Navigasi Horizontal Bisa Digeser (Swipe) di Layar HP */
     #destinasiTab {
         flex-wrap: nowrap !important;
         overflow-x: auto;
@@ -261,8 +341,6 @@ h1, h2, h3, h4, h5, h6, .font-headline {
         font-size: 0.82rem;
         padding: 0.5rem 0.9rem !important;
     }
-
-    /* Peta & Floating Toolbar di Layar HP */
     #mapToba {
         height: 430px !important;
         min-height: 400px !important;
