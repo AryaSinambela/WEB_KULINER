@@ -34,6 +34,6 @@ class AkunController extends Controller
         }
 
         $user->update($data);
-        return back()->with('success', 'Pengaturan akun mitra berhasil diperbarui.');
+        return back()->with('success', 'Pengaturan pada akun mitra berhasil diperbarui.');
     }
 }
