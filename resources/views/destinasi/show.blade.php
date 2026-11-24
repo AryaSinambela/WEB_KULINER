@@ -68,14 +68,12 @@
 
                     <div class="d-grid gap-2">
                         @auth
-                            @if(auth()->user()->role === 'wisatawan')
-                                <button type="button" class="btn btn-toba-primary py-2" data-bs-toggle="modal" data-bs-target="#modalSimpanRencana">
-                                    <i class="bi bi-bookmark-plus-fill me-1"></i> Simpan Toko ke Rencana Kunjungan
-                                </button>
-                                <a href="{{ route('ulasan.create', $destinasi) }}" class="btn btn-toba-secondary py-2">
-                                    <i class="bi bi-pencil-square me-1"></i> Beri Rating &amp; Ulasan Toko
-                                </a>
-                            @endif
+                            <button type="button" class="btn btn-toba-primary py-2" data-bs-toggle="modal" data-bs-target="#modalSimpanRencana">
+                                <i class="bi bi-bookmark-plus-fill me-1"></i> Simpan Toko ke Rencana Kunjungan
+                            </button>
+                            <a href="{{ route('ulasan.create', $destinasi) }}" class="btn btn-toba-secondary py-2">
+                                <i class="bi bi-pencil-square me-1"></i> Beri Rating &amp; Ulasan Toko
+                            </a>
                         @else
                             <button type="button" class="btn btn-toba-primary py-2" data-bs-toggle="modal" data-bs-target="#modalLoginPrompt">
                                 <i class="bi bi-bookmark-plus-fill me-1"></i> Simpan Toko ke Rencana Kunjungan
@@ -292,29 +290,88 @@
             </div>
         </div>
 
-        <!-- TAB 4: LOKASI & PETA -->
+        <!-- TAB 4: LOKASI & NAVIGASI PETA (A -> B GOOGLE MAPS STYLE) -->
         <div class="tab-pane fade" id="tab-lokasi">
             <div class="card-toba p-4">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
-                    <div>
-                        <h6 class="fw-bold mb-1">Alamat Lengkap &amp; Navigasi Interaktif</h6>
-                        <p class="text-muted small mb-0">{{ $destinasi->alamat }} ({{ $destinasi->latitude }}, {{ $destinasi->longitude }})</p>
+                <div class="row g-3">
+                    <!-- Panel Kontrol Titik Awal (A) & Tujuan Toko (B) -->
+                    <div class="col-lg-4">
+                        <div class="p-3 rounded-4 border h-100" style="background-color: var(--toba-neutral);">
+                            <h6 class="fw-bold mb-2" style="color: var(--toba-primary);">
+                                <i class="bi bi-sign-turn-right-fill me-1"></i> Navigasi Rute ke Toko Ini
+                            </h6>
+
+                            <!-- Titik Awal (A) -->
+                            <div class="mb-2">
+                                <label class="form-label small fw-bold text-primary mb-1">
+                                    <span class="badge bg-primary rounded-circle me-1">A</span> Titik Awal Keberangkatan *
+                                </label>
+                                <div class="input-group input-group-sm mb-1">
+                                    <input type="text" id="detailOriginInput" class="form-control" placeholder="Ketik kota/desa awal (mis. Parapat)...">
+                                    <button type="button" id="btnDetailSearchOrigin" class="btn btn-outline-primary" title="Cari Lokasi Awal">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                    <button type="button" id="btnDetailRouteGps" class="btn btn-primary" title="Gunakan GPS Saya">
+                                        <i class="bi bi-crosshair"></i> GPS
+                                    </button>
+                                </div>
+                                <select id="detailQuickOrigin" class="form-select form-select-sm bg-white" style="font-size: 11.5px;">
+                                    <option value="">-- Atau pilih titik awal cepat di Toba --</option>
+                                    <option value="2.3338,99.0664,Pusat Kota Balige">Pusat Kota Balige (Toba)</option>
+                                    <option value="2.6632,98.9341,Pantai Bebas Parapat">Pelabuhan / Pantai Bebas Parapat</option>
+                                    <option value="2.6085,98.6942,Pusat Kota Pangururan">Pusat Kota Pangururan (Samosir)</option>
+                                    <option value="2.6718,98.8574,Dermaga Tuktuk Siadong">Dermaga Wisata Tuktuk Siadong</option>
+                                    <option value="2.2571,98.9912,Bandara Silangit">Bandara Internasional Silangit</option>
+                                    <option value="2.0235,98.9612,Pusat Kota Tarutung">Pusat Kota Tarutung (Taput)</option>
+                                </select>
+                                <small class="text-muted d-block mt-1" style="font-size: 11px;">
+                                    *Anda juga bisa mengklik langsung di peta atau menggeser pin <strong>A</strong>.
+                                </small>
+                            </div>
+
+                            <!-- Titik Tujuan (B - Toko Ini) -->
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-danger mb-1">
+                                    <span class="badge bg-danger rounded-circle me-1">B</span> Titik Tujuan (Toko Kuliner)
+                                </label>
+                                <input type="text" class="form-control form-control-sm bg-white fw-semibold" value="{{ $destinasi->nama }} ({{ $destinasi->alamat }})" readonly>
+                            </div>
+
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="button" id="btnDetailCalcRoute" class="btn btn-toba-primary btn-sm py-2">
+                                    <i class="bi bi-sign-turn-right-fill me-1"></i> Tampilkan Rute Jalan Raya
+                                </button>
+                                <a href="{{ route('destinasi.rute', $destinasi) }}" id="detailExternalGmaps" target="_blank" class="btn btn-toba-outlined btn-sm py-1">
+                                    <i class="bi bi-box-arrow-up-right me-1"></i> Buka di Aplikasi Google Maps
+                                </a>
+                            </div>
+
+                            <!-- Ringkasan Jarak, Waktu, & Petunjuk Jalan -->
+                            <div id="detailRouteSummary" class="d-none">
+                                <div class="row g-2 text-center mb-2">
+                                    <div class="col-6">
+                                        <div class="p-2 rounded-3 bg-white border">
+                                            <small class="text-muted d-block" style="font-size: 10px;">JARAK TEMPUH</small>
+                                            <strong class="text-danger" id="detailRouteDist">-</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-2 rounded-3 bg-white border">
+                                            <small class="text-muted d-block" style="font-size: 10px;">WAKTU TEMPUH</small>
+                                            <strong class="text-success" id="detailRouteTime">-</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="detailRouteSteps" class="rounded-3 border bg-white p-2 small overflow-auto" style="max-height: 150px; font-size: 11.5px;"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="d-flex flex-wrap gap-2">
-                        <button type="button" id="btnDetailRouteGps" class="btn btn-toba-primary btn-sm px-3">
-                            <i class="bi bi-sign-turn-right-fill me-1"></i> Gambar Rute dari GPS Saya (OSRM)
-                        </button>
-                        <a href="{{ route('destinasi.rute', $destinasi) }}" target="_blank" class="btn btn-toba-outlined btn-sm px-3">
-                            <i class="bi bi-box-arrow-up-right me-1"></i> Google Maps
-                        </a>
+
+                    <!-- Kanvas Peta Rute Interaktif -->
+                    <div class="col-lg-8">
+                        <div id="detailMap" style="height: 440px; border-radius: 14px;" class="border shadow-sm"></div>
                     </div>
                 </div>
-                <div id="detailRouteSummary" class="alert alert-light border rounded-3 py-2 px-3 small mb-3 d-none">
-                    <i class="bi bi-car-front-fill text-danger me-1"></i>
-                    Estimasi Perjalanan Darat (OSRM): <strong id="detailRouteDist">-</strong> • Waktu Tempuh: <strong id="detailRouteTime">-</strong>
-                    <span class="text-muted ms-2">(Anda juga dapat mengklik titik mana saja di peta sebagai titik keberangkatan)</span>
-                </div>
-                <div id="detailMap" style="height: 380px; border-radius: 12px;" class="border"></div>
             </div>
         </div>
     </div>
@@ -344,26 +401,27 @@
 </div>
 @endguest
 
-<!-- MODAL SCREEN 10: SIMPAN KE RENCANA KUNJUNGAN (Untuk Wisatawan) -->
+<!-- MODAL SCREEN 10: SIMPAN KE RENCANA KUNJUNGAN (Untuk Semua Pengguna yang Login) -->
 @auth
-@if(auth()->user()->role === 'wisatawan')
 <div class="modal fade" id="modalSimpanRencana" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0">
             <div class="modal-header border-bottom">
-                <h5 class="modal-title fw-bold">Simpan ke Rencana Kunjungan</h5>
+                <h5 class="modal-title fw-bold">Simpan Toko ke Rencana Kunjungan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 @if($itineraries->count() > 0)
-                    <form action="" id="formTambahStop" method="POST">
+                    <form action="{{ route('itinerary.stop', $itineraries->first()->id) }}" id="formTambahStop" method="POST">
                         @csrf
                         <input type="hidden" name="destinasi_id" value="{{ $destinasi->id }}">
                         <div class="mb-3">
-                            <label class="form-label small fw-bold">Pilih Rencana Perjalanan</label>
-                            <select id="selectItineraryId" class="form-select" required>
+                            <label class="form-label small fw-bold">Pilih Rencana Perjalanan Anda</label>
+                            <select id="selectItineraryId" name="itinerary_id" class="form-select" required>
                                 @foreach($itineraries as $itin)
-                                    <option value="{{ $itin->id }}">{{ $itin->judul }} ({{ $itin->tanggal_kunjungan ?? 'Fleksibel' }})</option>
+                                    <option value="{{ $itin->id }}" data-action-url="{{ route('itinerary.stop', $itin->id) }}">
+                                        {{ $itin->judul }} ({{ $itin->tanggal_kunjungan ?? 'Fleksibel' }})
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -381,7 +439,9 @@
                             <label class="form-label small fw-bold">Catatan Khusus / Pesanan</label>
                             <input type="text" name="catatan" class="form-control" placeholder="Contoh: Pesan mie gomak kuah andaliman">
                         </div>
-                        <button type="submit" class="btn btn-toba-primary w-100 py-2">Tambahkan ke Rencana Ini</button>
+                        <button type="submit" class="btn btn-toba-primary w-100 py-2">
+                            <i class="bi bi-check2-circle me-1"></i> Tambahkan Toko ke Rencana Ini
+                        </button>
                     </form>
                     <hr>
                 @endif
@@ -389,17 +449,30 @@
                 <form action="{{ route('itinerary.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="destinasi_id" value="{{ $destinasi->id }}">
-                    <label class="form-label small fw-bold text-muted">Atau Buat Rencana Perjalanan Baru:</label>
-                    <div class="input-group">
-                        <input type="text" name="judul" class="form-control" placeholder="Judul rencana (mis. Jelajah Balige 2 Hari)" required>
-                        <button type="submit" class="btn btn-toba-secondary">Buat &amp; Simpan</button>
+                    <label class="form-label small fw-bold text-muted">Atau Buat Rencana Perjalanan Baru &amp; Langsung Simpan Toko Ini:</label>
+                    <div class="row g-2 mb-2">
+                        <div class="col-12">
+                            <input type="text" name="judul" class="form-control" placeholder="Judul rencana baru (mis. Jelajah Balige & Samosir)" required>
+                        </div>
+                        <div class="col-6">
+                            <input type="date" name="tanggal_kunjungan" value="{{ date('Y-m-d') }}" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-6">
+                            <select name="moda" class="form-select form-select-sm">
+                                <option value="Mobil">Mobil</option>
+                                <option value="Motor">Motor</option>
+                                <option value="Kapal Feri & Darat">Kapal Feri &amp; Darat</option>
+                            </select>
+                        </div>
                     </div>
+                    <button type="submit" class="btn btn-toba-secondary w-100 py-2">
+                        <i class="bi bi-plus-circle me-1"></i> Buat Rencana Baru &amp; Simpan Toko
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-@endif
 @endauth
 @endsection
 
@@ -410,37 +483,83 @@
     let dMap = null;
     let dRouteLayer = null;
     let dOriginMarker = null;
+    let dOriginCoords = null;
 
     const destLat = {{ (float) $destinasi->latitude }};
     const destLng = {{ (float) $destinasi->longitude }};
 
-    function drawOsrmDetailRoute(startLat, startLng) {
-        if (!dMap) return;
-        if (dOriginMarker) dMap.removeLayer(dOriginMarker);
-        dOriginMarker = L.circleMarker([startLat, startLng], {
-            radius: 8, fillColor: '#0d6efd', color: '#fff', weight: 2, fillOpacity: 0.95
-        }).addTo(dMap).bindPopup('Titik Keberangkatan Anda').openPopup();
+    function createBadgePin(letter, bgColor) {
+        return L.divIcon({
+            className: '',
+            html: `<div style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:${bgColor};color:#fff;font-weight:800;font-size:14px;border:3px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,0.4);">${letter}</div>`,
+            iconSize: [34, 34],
+            iconAnchor: [17, 17]
+        });
+    }
 
-        fetch(`https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${destLng},${destLat}?overview=full&geometries=geojson`)
+    function drawOsrmDetailRoute(startLat, startLng, originLabel = null) {
+        if (!dMap) return;
+        dOriginCoords = { lat: startLat, lng: startLng };
+
+        if (dOriginMarker) dMap.removeLayer(dOriginMarker);
+        dOriginMarker = L.marker([startLat, startLng], {
+            icon: createBadgePin('A', '#0d6efd'),
+            draggable: true
+        }).addTo(dMap);
+
+        dOriginMarker.on('dragend', function (e) {
+            const p = e.target.getLatLng();
+            drawOsrmDetailRoute(p.lat, p.lng);
+        });
+
+        if (originLabel) {
+            document.getElementById('detailOriginInput').value = originLabel;
+            dOriginMarker.bindPopup(`<strong>Titik Awal (A): ${originLabel}</strong><br><small>Geser pin A untuk mengubah titik awal</small>`);
+        } else {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${startLat}&lon=${startLng}`)
+                .then(r => r.json())
+                .then(d => {
+                    const addr = d.display_name ? d.display_name.split(',').slice(0, 3).join(',') : `${startLat.toFixed(4)}, ${startLng.toFixed(4)}`;
+                    document.getElementById('detailOriginInput').value = addr;
+                    dOriginMarker.bindPopup(`<strong>Titik Awal (A): ${addr}</strong>`);
+                }).catch(() => {});
+        }
+
+        document.getElementById('detailExternalGmaps').href = `https://www.google.com/maps/dir/?api=1&origin=${startLat},${startLng}&destination=${destLat},${destLng}`;
+
+        fetch(`https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${destLng},${destLat}?overview=full&geometries=geojson&steps=true`)
             .then(r => r.json())
             .then(res => {
                 dRouteLayer.clearLayers();
                 if (res.routes && res.routes.length > 0) {
                     const route = res.routes[0];
+                    L.geoJSON(route.geometry, { style: { color: '#ffffff', weight: 8, opacity: 0.9 } }).addTo(dRouteLayer);
                     const line = L.geoJSON(route.geometry, {
-                        style: { color: '#8B1E2D', weight: 5, opacity: 0.85 }
+                        style: { color: '#0d6efd', weight: 5, opacity: 0.95 }
                     }).addTo(dRouteLayer);
-                    dMap.fitBounds(line.getBounds(), { padding: [40, 40] });
+                    dMap.fitBounds(line.getBounds(), { padding: [45, 45] });
+
                     document.getElementById('detailRouteDist').textContent = (route.distance / 1000).toFixed(1) + ' km';
-                    document.getElementById('detailRouteTime').textContent = Math.round(route.duration / 60) + ' menit';
+                    document.getElementById('detailRouteTime').textContent = Math.max(1, Math.round(route.duration / 60)) + ' menit';
                     document.getElementById('detailRouteSummary').classList.remove('d-none');
+
+                    const steps = route.legs?.[0]?.steps || [];
+                    const stepsContainer = document.getElementById('detailRouteSteps');
+                    if (steps.length > 0) {
+                        stepsContainer.innerHTML = `<strong class="d-block mb-1 text-dark">Panduan Arah Jalan:</strong>` +
+                            steps.map((s, i) => {
+                                const dText = s.distance >= 1000 ? (s.distance / 1000).toFixed(1) + ' km' : Math.round(s.distance) + ' m';
+                                const road = s.name ? ` ke <strong>${s.name}</strong>` : '';
+                                return `<div class="py-1 border-bottom">${i + 1}. Ikuti jalur${road} <span class="text-muted">(${dText})</span></div>`;
+                            }).join('');
+                    }
                 }
             });
     }
 
     tabLokasiBtn?.addEventListener('shown.bs.tab', function () {
         if (!detailMapInit) {
-            dMap = L.map('detailMap').setView([destLat, destLng], 15);
+            dMap = L.map('detailMap').setView([destLat, destLng], 14);
             const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(dMap);
             const satHybrid = L.layerGroup([
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
@@ -455,7 +574,10 @@
             }).addTo(dMap);
 
             dRouteLayer = L.layerGroup().addTo(dMap);
-            L.marker([destLat, destLng]).addTo(dMap).bindPopup("<strong>{{ addslashes($destinasi->nama) }}</strong><br><small>Klik titik lain di peta untuk menghitung rute ke sini</small>").openPopup();
+            L.marker([destLat, destLng], { icon: createBadgePin('B', '#dc3545') })
+                .addTo(dMap)
+                .bindPopup("<strong>Tujuan (B): {{ addslashes($destinasi->nama) }}</strong><br><small>Klik titik mana saja di peta untuk menetapkan Titik Awal (A)</small>")
+                .openPopup();
 
             dMap.on('click', function (e) {
                 drawOsrmDetailRoute(e.latlng.lat, e.latlng.lng);
@@ -465,26 +587,54 @@
         }
     });
 
+    document.getElementById('detailQuickOrigin')?.addEventListener('change', function () {
+        if (!this.value) return;
+        const [lat, lng, label] = this.value.split(',');
+        drawOsrmDetailRoute(parseFloat(lat), parseFloat(lng), label);
+    });
+
+    function searchDetailOrigin() {
+        const q = document.getElementById('detailOriginInput').value.trim();
+        if (!q) {
+            if (dOriginCoords) drawOsrmDetailRoute(dOriginCoords.lat, dOriginCoords.lng);
+            else drawOsrmDetailRoute(2.3338, 99.0664, 'Pusat Kota Balige');
+            return;
+        }
+        fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(q + ' Sumatera Utara')}&limit=1`)
+            .then(r => r.json())
+            .then(res => {
+                if (res.length > 0) {
+                    const shortName = res[0].display_name.split(',').slice(0, 2).join(',');
+                    drawOsrmDetailRoute(parseFloat(res[0].lat), parseFloat(res[0].lon), shortName);
+                } else {
+                    alert('Lokasi titik awal tidak ditemukan. Silakan pilih dari dropdown atau klik langsung di peta.');
+                }
+            });
+    }
+
+    document.getElementById('btnDetailSearchOrigin')?.addEventListener('click', searchDetailOrigin);
+    document.getElementById('btnDetailCalcRoute')?.addEventListener('click', searchDetailOrigin);
+
     document.getElementById('btnDetailRouteGps')?.addEventListener('click', function () {
         if (!navigator.geolocation) {
             alert('Geolokasi tidak didukung browser Anda. Silakan klik titik awal langsung pada peta.');
             return;
         }
         navigator.geolocation.getCurrentPosition(
-            pos => drawOsrmDetailRoute(pos.coords.latitude, pos.coords.longitude),
-            () => {
-                // Gunakan pusat Balige/Toba sebagai simulasi jika GPS ditolak
-                drawOsrmDetailRoute(2.3338, 99.0664);
-            }
+            pos => drawOsrmDetailRoute(pos.coords.latitude, pos.coords.longitude, 'Lokasi GPS Saya'),
+            () => drawOsrmDetailRoute(2.3338, 99.0664, 'Pusat Kota Balige')
         );
     });
 
-    // Dynamic action untuk form tambah stop ke itinerary terpilih
+    // Dynamic action untuk form tambah stop ke itinerary terpilih menggunakan data-action-url
     const formStop = document.getElementById('formTambahStop');
     const selectItin = document.getElementById('selectItineraryId');
     if (formStop && selectItin) {
         const updateAction = () => {
-            formStop.action = `/rencana/${selectItin.value}/stop`;
+            const selectedOpt = selectItin.options[selectItin.selectedIndex];
+            if (selectedOpt && selectedOpt.dataset.actionUrl) {
+                formStop.action = selectedOpt.dataset.actionUrl;
+            }
         };
         updateAction();
         selectItin.addEventListener('change', updateAction);
