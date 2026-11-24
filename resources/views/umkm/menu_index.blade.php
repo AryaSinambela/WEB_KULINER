@@ -23,7 +23,21 @@
             @endphp
             <div class="col-md-6">
                 <div class="card-toba h-100 overflow-hidden d-flex flex-column">
-                    <img src="{{ $menu->url_foto }}" class="w-100 object-fit-cover border-bottom" style="height: 175px;" alt="{{ $menu->nama_menu }}">
+                    <div class="destinasi-card-img-wrap" style="height: 175px;">
+                        <div class="destinasi-placeholder-fallback">
+                            <div class="placeholder-icon-circle">
+                                <i class="bi bi-cup-hot"></i>
+                            </div>
+                            <span class="placeholder-title">{{ $menu->nama_menu }}</span>
+                        </div>
+                        @if(!empty($menu->url_foto))
+                            <img src="{{ $menu->url_foto }}" 
+                                 class="destinasi-card-img border-bottom" 
+                                 alt="{{ $menu->nama_menu }}"
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.style.display='none';">
+                        @endif
+                    </div>
                     <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
                         <div>
                             <div class="d-flex justify-content-between align-items-start gap-2 mb-1">

@@ -603,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 res.data.forEach(item => {
                     currentBounds.push([item.latitude, item.longitude]);
                     const imgHtml = item.foto
-                        ? `<img src="${item.foto}" class="w-100 object-fit-cover" style="height: 115px;" alt="${item.nama}">`
+                        ? `<img src="${item.foto}" class="w-100 object-fit-cover" style="height: 115px;" alt="${item.nama}" onerror="this.style.display='none';">`
                         : '';
                     const badgeOtentik = item.is_otentik_batak
                         ? `<span class="badge bg-warning text-dark mb-1" style="font-size:10px;">★ Otentik Batak</span>`

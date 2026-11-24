@@ -99,7 +99,19 @@
         <div class="row g-3 mb-4">
             @foreach($destinasi->fotos->take(3) as $foto)
                 <div class="{{ $loop->first ? ($destinasi->fotos->count() == 1 ? 'col-12' : 'col-md-6') : 'col-md-3' }}">
-                    <img src="{{ $foto->url_foto }}" class="w-100 rounded-4 object-fit-cover border" style="height: 260px;" alt="{{ $destinasi->nama }}">
+                    <div class="rounded-4 overflow-hidden position-relative border" style="height: 260px; background: linear-gradient(135deg, #FAF5EA, #EBD5D8);">
+                        <div class="destinasi-placeholder-fallback">
+                            <div class="placeholder-icon-circle">
+                                <i class="bi bi-images"></i>
+                            </div>
+                            <span class="placeholder-title">{{ $destinasi->nama }}</span>
+                        </div>
+                        <img src="{{ $foto->url_foto }}" 
+                             class="w-100 h-100 object-fit-cover position-absolute top-0 start-0 z-1" 
+                             alt="{{ $destinasi->nama }}"
+                             loading="lazy"
+                             onerror="this.onerror=null; this.style.display='none';">
+                    </div>
                 </div>
             @endforeach
         </div>
@@ -142,7 +154,22 @@
                     @endphp
                     <div class="col-md-6">
                         <div class="card-toba h-100 overflow-hidden d-flex flex-column">
-                            <img src="{{ $menu->url_foto }}" class="w-100 object-fit-cover border-bottom" style="height: 190px;" alt="{{ $menu->nama_menu }}">
+                            <div class="destinasi-card-img-wrap" style="height: 190px;">
+                                <div class="destinasi-placeholder-fallback">
+                                    <div class="placeholder-icon-circle">
+                                        <i class="bi bi-cup-hot"></i>
+                                    </div>
+                                    <span class="placeholder-title">{{ $menu->nama_menu }}</span>
+                                    <span class="placeholder-subtitle">Menu Khas Toba</span>
+                                </div>
+                                @if(!empty($menu->url_foto))
+                                    <img src="{{ $menu->url_foto }}" 
+                                         class="destinasi-card-img border-bottom" 
+                                         alt="{{ $menu->nama_menu }}"
+                                         loading="lazy"
+                                         onerror="this.onerror=null; this.style.display='none';">
+                                @endif
+                            </div>
                             <div class="p-4 d-flex flex-column flex-grow-1">
                                 <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                                     <div>

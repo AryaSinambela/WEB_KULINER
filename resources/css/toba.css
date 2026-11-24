@@ -205,3 +205,112 @@ h1, h2, h3, h4, h5, h6, .font-headline {
         border-radius: 16px;
     }
 }
+
+/* =========================================================
+   4. WADAH GAMBAR KARTU DESTINASI & PLACEHOLDER FALLBACK
+   ========================================================= */
+.destinasi-card-img-wrap,
+.destinasi-img-wrap {
+    position: relative;
+    width: 100%;
+    height: 190px;
+    min-height: 190px;
+    max-height: 190px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #FAF5EA 0%, #F4ECE0 50%, #EAD4D7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    user-select: none;
+}
+
+.destinasi-card-img-wrap .destinasi-card-img,
+.destinasi-img-wrap .destinasi-card-img,
+.destinasi-card-img-wrap img,
+.destinasi-img-wrap img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 1;
+    color: transparent;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.card-toba:hover .destinasi-card-img-wrap img,
+.card-toba:hover .destinasi-img-wrap img {
+    transform: scale(1.06);
+}
+
+.destinasi-card-img-wrap .destinasi-placeholder-fallback,
+.destinasi-img-wrap .destinasi-placeholder-fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.25rem 1rem;
+    background: radial-gradient(circle at 75% 25%, rgba(201, 162, 75, 0.18) 0%, transparent 60%),
+                radial-gradient(circle at 20% 80%, rgba(139, 30, 45, 0.12) 0%, transparent 60%),
+                linear-gradient(135deg, #FAF5EA 0%, #F5ECE0 45%, #EAD4D7 100%);
+    border-bottom: 1px solid rgba(230, 222, 200, 0.85);
+    z-index: 0;
+}
+
+.destinasi-card-img-wrap .placeholder-icon-circle,
+.destinasi-img-wrap .placeholder-icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1.5px dashed rgba(201, 162, 75, 0.75);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--toba-primary);
+    font-size: 1.4rem;
+    margin-bottom: 0.35rem;
+    box-shadow: 0 4px 10px rgba(139, 30, 45, 0.08);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.card-toba:hover .placeholder-icon-circle {
+    transform: scale(1.1) rotate(6deg);
+    background-color: #FFFFFF;
+}
+
+.destinasi-card-img-wrap .placeholder-title,
+.destinasi-img-wrap .placeholder-title {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--toba-primary);
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.destinasi-card-img-wrap .placeholder-subtitle,
+.destinasi-img-wrap .placeholder-subtitle {
+    font-size: 0.7rem;
+    color: var(--toba-muted);
+    font-weight: 500;
+}
+
+.destinasi-card-img-wrap .destinasi-badge-wrap,
+.destinasi-img-wrap .destinasi-badge-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0.75rem;
+    z-index: 3;
+    pointer-events: none;
+}

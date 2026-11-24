@@ -25,12 +25,25 @@ class FotoDestinasi extends Model
 
         // 1. Jika mengarah ke folder public/images/...
         if (str_starts_with($path, 'images/')) {
+            $base = preg_replace('/\.(jpg|jpeg|png|webp|svg)$/i', '', $path);
+
+            // Jika tersedia file .svg (misal file SVG vektor), utamakan agar browser render dengan benar tanpa error MIME type
+            if (file_exists(public_path("{$base}.svg"))) {
+                return asset("{$base}.svg");
+            }
+
             if (file_exists(public_path($path))) {
+                // Deteksi jika file .jpg/.png sebenarnya berformat teks SVG
+                $header = @file_get_contents(public_path($path), false, null, 0, 150);
+                if ($header && (str_contains($header, '<svg') || str_contains($header, '<?xml'))) {
+                    @copy(public_path($path), public_path("{$base}.svg"));
+                    return asset("{$base}.svg");
+                }
                 return asset($path);
             }
-            // Cek jika user menaruh file dengan ekstensi berbeda (.jpg, .jpeg, .png, .webp)
-            $base = preg_replace('/\.(jpg|jpeg|png|webp|svg)$/i', '', $path);
-            foreach (['jpg', 'jpeg', 'png', 'webp', 'svg'] as $ext) {
+
+            // Cek jika user menaruh file dengan ekstensi berbeda (.jpg, .jpeg, .png, .webp, .svg)
+            foreach (['svg', 'webp', 'jpg', 'jpeg', 'png'] as $ext) {
                 if (file_exists(public_path("{$base}.{$ext}"))) {
                     return asset("{$base}.{$ext}");
                 }

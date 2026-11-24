@@ -96,14 +96,31 @@
         @forelse($destinasiList as $item)
             <div class="col-md-6 col-lg-3 destinasi-col">
                 <div class="card-toba h-100 overflow-hidden d-flex flex-column destinasi-card">
-                    <div class="position-relative destinasi-img-wrap">
-                        <img src="{{ $item->url_foto_utama }}" 
-                             class="w-100 object-fit-cover" style="height: 185px;" alt="{{ $item->nama }}" loading="lazy">
-                        <div class="position-absolute top-0 start-0 m-2 d-flex flex-wrap gap-1">
+                    <div class="destinasi-card-img-wrap">
+                        <!-- Placeholder Fallback Elemen (selalu ada di latar belakang jika gambar kosong / gagal dimuat) -->
+                        <div class="destinasi-placeholder-fallback">
+                            <div class="placeholder-icon-circle">
+                                <i class="bi bi-shop"></i>
+                            </div>
+                            <span class="placeholder-title">{{ Str::limit($item->nama, 26) }}</span>
+                            <span class="placeholder-subtitle"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ $item->wilayah->kabupaten ?? 'Kaldera Toba' }}</span>
+                        </div>
+
+                        <!-- Gambar Utama Destinasi -->
+                        @if(!empty($item->url_foto_utama))
+                            <img src="{{ $item->url_foto_utama }}" 
+                                 class="destinasi-card-img" 
+                                 alt="{{ $item->nama }}" 
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.style.display='none';">
+                        @endif
+
+                        <!-- Lencana / Badges (Tetap rapi di pojok kiri atas tanpa tertabrak teks alt) -->
+                        <div class="destinasi-badge-wrap d-flex flex-wrap gap-1">
                             @if($item->is_otentik_batak)
                                 <span class="badge-otentik shadow-sm">★ Otentik Batak</span>
                             @endif
-                            <span class="badge bg-dark bg-opacity-75 rounded-pill" style="font-size: 11px;">{{ $item->kategori->nama ?? 'Kuliner' }}</span>
+                            <span class="badge bg-dark bg-opacity-75 rounded-pill shadow-sm" style="font-size: 11px;">{{ $item->kategori->nama ?? 'Kuliner' }}</span>
                         </div>
                     </div>
 
