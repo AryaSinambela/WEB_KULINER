@@ -23,6 +23,7 @@
                         <th>Email &amp; Telepon</th>
                         <th>Peran Sistem</th>
                         <th>Bobot Penilai</th>
+                        <th>Status Akun</th>
                         <th class="text-end">Aksi</th>
                     </tr>
                 </thead>
@@ -44,21 +45,36 @@
                                     <span class="badge bg-light text-dark border">Wisatawan (1.0x)</span>
                                 @endif
                             </td>
+                            <td>
+                                @if($u->is_aktif)
+                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Aktif</span>
+                                @else
+                                    <span class="badge bg-danger"><i class="bi bi-slash-circle me-1"></i>Diblokir</span>
+                                @endif
+                            </td>
                             <td class="text-end">
                                 <button type="button" class="btn btn-sm btn-toba-secondary" data-bs-toggle="modal" data-bs-target="#modalEditUser{{ $u->id }}">
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </button>
                                 @if($u->id !== auth()->id())
-                                    <form action="{{ route('admin.pengguna.blokir', $u) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('admin.pengguna.blokir', $u) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ $u->is_aktif ? 'Blokir akses pengguna ini?' : 'Aktifkan kembali akun pengguna ini?' }}')">
                                         @csrf @method('PATCH')
-                                        <button type="submit" class="btn btn-sm btn-outline-warning text-dark" title="Ubah Status Akses">Status</button>
+                                        @if($u->is_aktif)
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Blokir Akses Pengguna">
+                                                <i class="bi bi-lock-fill"></i> Blokir
+                                            </button>
+                                        @else
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Aktifkan Kembali">
+                                                <i class="bi bi-unlock-fill"></i> Aktifkan
+                                            </button>
+                                        @endif
                                     </form>
-                                    <form action="{{ route('admin.pengguna.destroy', $u) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus pengguna ini?')">
+                                    <form action="{{ route('admin.pengguna.destroy', $u) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus permanen pengguna ini?')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary" title="Hapus Akun"><i class="bi bi-trash"></i></button>
                                     </form>
                                 @else
-                                    <span class="badge bg-success ms-1">Anda</span>
+                                    <span class="badge bg-success ms-1">Anda (Admin Aktif)</span>
                                 @endif
 
                                 <!-- Modal Edit Pengguna -->
@@ -75,7 +91,7 @@
                                                     <label class="form-label small fw-bold">Nama Lengkap *</label>
                                                     <input type="text" name="nama" value="{{ $u->nama }}" class="form-control" required>
                                                 </div>
-                                                <div class="row g-2">
+                                                <div class="row g-2 mb-3">
                                                     <div class="col-6">
                                                         <label class="form-label small fw-bold">Peran Sistem</label>
                                                         <select name="role" class="form-select">
@@ -92,6 +108,15 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                @if($u->id !== auth()->id())
+                                                    <div>
+                                                        <label class="form-label small fw-bold">Status Akses Akun</label>
+                                                        <select name="is_aktif" class="form-select">
+                                                            <option value="1" {{ $u->is_aktif ? 'selected' : '' }}>Aktif (Dapat Mengakses Sistem)</option>
+                                                            <option value="0" {{ !$u->is_aktif ? 'selected' : '' }}>Diblokir / Dinonaktifkan</option>
+                                                        </select>
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-toba-primary w-100">Simpan Perubahan</button>

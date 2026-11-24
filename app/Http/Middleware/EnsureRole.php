@@ -14,6 +14,13 @@ class EnsureRole
             abort(403, 'Anda tidak memiliki hak akses ke halaman ini.');
         }
 
+        if (!$request->user()->is_aktif) {
+            \Illuminate\Support\Facades\Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')->withErrors(['email' => 'Akun Anda sedang dinonaktifkan / diblokir oleh Administrator.']);
+        }
+
         return $next($request);
     }
 }

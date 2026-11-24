@@ -48,7 +48,12 @@ class PenggunaController extends Controller
             'nama'         => 'required|string|max:255',
             'role'         => 'required|in:admin,umkm,wisatawan',
             'tipe_penilai' => 'required|in:wisatawan,lokal',
+            'is_aktif'     => 'nullable|boolean',
         ]);
+
+        if (isset($validated['is_aktif']) && $user->id === auth()->id()) {
+            unset($validated['is_aktif']);
+        }
 
         $user->update($validated);
         return back()->with('success', "Data pengguna {$user->nama} berhasil diperbarui.");
@@ -65,6 +70,13 @@ class PenggunaController extends Controller
 
     public function blokir(User $user)
     {
-        return back()->with('success', "Status akses pengguna {$user->nama} telah diperbarui.");
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak dapat mengubah status akses akun Anda sendiri.');
+        }
+
+        $user->update(['is_aktif' => !$user->is_aktif]);
+        $status = $user->is_aktif ? 'diaktifkan kembali' : 'berhasil dinonaktifkan (diblokir)';
+
+        return back()->with('success', "Status akses akun {$user->nama} {$status}.");
     }
 }

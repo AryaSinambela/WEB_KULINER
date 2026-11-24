@@ -21,6 +21,12 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            if (!Auth::user()->is_aktif) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors(['email' => 'Akun Administrator ini sedang dinonaktifkan.']);
+            }
             if (Auth::user()->role !== 'admin') {
                 Auth::logout();
                 return back()->withErrors(['email' => 'Akses ditolak. Akun ini tidak memiliki hak Administrator/Kurator.']);
