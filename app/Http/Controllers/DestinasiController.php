@@ -30,7 +30,7 @@ class DestinasiController extends Controller
             'ulasans.fotos',
         ]);
 
-        $itineraries = Auth::check() && Auth::user()->role === 'wisatawan'
+        $itineraries = Auth::check()
             ? Auth::user()->itineraries()->latest()->get()
             : collect();
 

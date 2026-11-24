@@ -42,20 +42,18 @@
                     <li class="nav-item">
                         <a class="nav-link px-2 {{ request()->routeIs('jelajah*') ? 'active fw-bold text-danger' : '' }}" href="{{ route('jelajah') }}">Jelajah</a>
                     </li>
-                    @if(!auth()->check() || auth()->user()->role === 'wisatawan')
-                        <li class="nav-item">
-                            <a class="nav-link px-2 {{ request()->routeIs('itinerary*') ? 'active fw-bold text-danger' : '' }}" href="{{ route('itinerary.index') }}">Rencana Kunjungan</a>
-                        </li>
-                    @endif
+                    <li class="nav-item">
+                        <a class="nav-link px-2 {{ request()->routeIs('itinerary*') ? 'active fw-bold text-danger' : '' }}" href="{{ route('itinerary.index') }}">Rencana Kunjungan</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link px-2 {{ request()->routeIs('tentang*') ? 'active fw-bold text-danger' : '' }}" href="{{ route('tentang') }}">Tentang &amp; Budaya</a>
                     </li>
                 </ul>
 
-                <div class="d-flex align-items-center gap-2">
+                <div class="d-flex flex-wrap align-items-center gap-2 mt-2 mt-lg-0">
                     @guest
-                        <a href="{{ route('login') }}" class="btn btn-link text-decoration-none fw-semibold text-dark px-3">Masuk</a>
-                        <a href="{{ route('register') }}" class="btn btn-toba-primary px-4 py-2">Daftar</a>
+                        <a href="{{ route('login') }}" class="btn btn-toba-outlined btn-sm px-3 py-2">Masuk</a>
+                        <a href="{{ route('register') }}" class="btn btn-toba-primary btn-sm px-4 py-2">Daftar Akun</a>
                     @else
                         @if(auth()->user()->role === 'admin')
                             <a href="{{ route('admin.dashboard') }}" class="btn btn-toba-secondary btn-sm px-3 py-2">
@@ -85,20 +83,19 @@
                                 <span>{{ Str::limit(auth()->user()->nama, 16) }}</span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 p-2 mt-2">
-                                @if(auth()->user()->role === 'wisatawan')
-                                    <li><a class="dropdown-item rounded-3 py-2" href="{{ route('profil.edit') }}"><i class="bi bi-person me-2"></i>Profil &amp; Preferensi</a></li>
-                                    <li><a class="dropdown-item rounded-3 py-2" href="{{ route('itinerary.index') }}"><i class="bi bi-map me-2"></i>Rencana Kunjungan Saya</a></li>
-                                    <li><a class="dropdown-item rounded-3 py-2" href="{{ route('profil.ulasan') }}"><i class="bi bi-star me-2"></i>Riwayat Ulasan Saya</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2" href="{{ route('profil.edit') }}"><i class="bi bi-person me-2"></i>Profil &amp; Preferensi</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2" href="{{ route('itinerary.index') }}"><i class="bi bi-map me-2"></i>Rencana Kunjungan Saya</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2" href="{{ route('profil.ulasan') }}"><i class="bi bi-star me-2"></i>Riwayat Ulasan Saya</a></li>
+                                @if(auth()->user()->role === 'umkm')
                                     <li><hr class="dropdown-divider"></li>
-                                @elseif(auth()->user()->role === 'umkm')
                                     <li><a class="dropdown-item rounded-3 py-2" href="{{ route('umkm.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard Mitra</a></li>
                                     <li><a class="dropdown-item rounded-3 py-2" href="{{ route('umkm.akun') }}"><i class="bi bi-person-gear me-2"></i>Pengaturan Akun Mitra</a></li>
-                                    <li><hr class="dropdown-divider"></li>
                                 @elseif(auth()->user()->role === 'admin')
+                                    <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item rounded-3 py-2" href="{{ route('admin.dashboard') }}"><i class="bi bi-shield-check me-2"></i>Dashboard Admin</a></li>
                                     <li><a class="dropdown-item rounded-3 py-2" href="{{ route('admin.profil') }}"><i class="bi bi-person-badge me-2"></i>Profil &amp; Log Kurator</a></li>
-                                    <li><hr class="dropdown-divider"></li>
                                 @endif
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf

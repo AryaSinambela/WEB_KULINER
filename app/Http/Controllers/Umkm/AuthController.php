@@ -36,7 +36,7 @@ class AuthController extends Controller
             'wilayah_id'    => 'required|exists:wilayah,id',
             'kategori_id'   => 'required|exists:kategori_makanan,id',
             'alamat'        => 'required|string|max:255',
-            'password'      => 'required|string|min:8|confirmed',
+            'password'      => 'required|string|min:6|confirmed',
         ]);
 
         $user = DB::transaction(function () use ($validated) {

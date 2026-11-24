@@ -36,8 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifikasi/baca-semua', [NotifikasiController::class, 'bacaSemua'])->name('notifikasi.baca-semua');
 });
 
-/* ============ WISATAWAN / WARGA LOKAL ============ */
-Route::middleware(['auth', 'role:wisatawan'])->group(function () {
+/* ============ PENGGUNA TERAUTENTIKASI (RENCANA KUNJUNGAN, ULASAN, & PROFIL) ============ */
+Route::middleware(['auth'])->group(function () {
     Route::get('/destinasi/{destinasi}/ulasan/baru', [UlasanController::class, 'create'])->name('ulasan.create'); // U11
     Route::post('/destinasi/{destinasi}/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
     Route::get('/ulasan/{ulasan}/edit', [UlasanController::class, 'edit'])->name('ulasan.edit');
